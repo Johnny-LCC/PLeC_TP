@@ -77,12 +77,12 @@ for x,y in sorted(dCol.items()):
     ycol.append(y)
 
 xtensao, ytensao = [], []
-for x,y in tensao.items():
+for x,y in sorted(tensao.items()):
     xtensao.append(x)
     ytensao.append(y)
 
 xbpm, ybpm = [], []
-for x,y in bpm.items():
+for x,y in sorted(bpm.items()):
     xbpm.append(x)
     ybpm.append(y)
 
@@ -105,9 +105,10 @@ plt.xlabel("Escalões Etários")
 plt.savefig("imagem2.png")
 plt.close()
 
-plt.bar(xcol,ycol)
-plt.xlabel("Nível colesterol")
-plt.ylabel("Número doentes")
+plt.figure(figsize=(10,8))
+plt.barh(xcol,ycol)
+plt.ylabel("Nível colesterol")
+plt.xlabel("Número doentes")
 plt.savefig("imagem3.png")
 plt.close()
 
@@ -172,12 +173,12 @@ conteudo_html = f"""<!DOCTYPE html>
     </div>
     <div class="section">
         <h2>Distribuição por Níveis de Colesterol</h2>
-        <p>Esta é a distribuição de doentes de acordo com os seus níveis de colesterol. Atente-se que "ND" significa "No Data" e representa o número de pacientes cujos níveis de colesterol são desconhecidos</p>
+        <p>Esta é a distribuição de doentes de acordo com os seus níveis de colesterol. Atente-se que "ND" significa "No Data" e representa o número de pacientes cujos níveis de colesterol são desconhecidos.</p>
         <img src="imagem3.png" alt="Barras colesterol doentes">
     </div>
     <div class="section">
         <h2>Correlação Tensão/Batimento e Doença</h2>
-        <p>Com auxílio de ambos os g´raficos abaixo podemos ver a correlação entre a Tensão e Batimentos com a doença.</p>
+        <p>Com auxílio de ambos os gráficos abaixo podemos ver a correlação entre a Tensão e Batimentos com a doença.</p>
         <img src="imagem4.png" alt="Correlação Tensão">
         <img src="imagem5.png" alt="Correlação Batimentos">
     </div>
