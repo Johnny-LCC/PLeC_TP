@@ -9,12 +9,10 @@ import matplotlib.pyplot as plt
 
 #Variáveis
 num_linhas = 0
-doentes = 0
-masc, fem = 0, 0
+doentes, masc, fem = 0, 0, 0
 idades = {}
 col = []
-tensao = {}
-bpm = {}
+tensao, bpm = {}, {}
 
 #Leitura ficheiro
 myHeart = open("myheart.csv", "r")
@@ -113,13 +111,14 @@ plt.ylabel("Número doentes")
 plt.savefig("imagem3.png")
 plt.close()
 
-plt.subplot(2,1,1)
 plt.plot(xtensao,ytensao)
 plt.title("Tensão")
-plt.subplot(2,1,2)
+plt.savefig("imagem4.png")
+plt.close()
+
 plt.plot(xbpm, ybpm)
 plt.title("Batimentos")
-plt.savefig("imagem4.png")
+plt.savefig("imagem5.png")
 plt.close()
 
 #Ficheiro HTML
@@ -173,13 +172,14 @@ conteudo_html = f"""<!DOCTYPE html>
     </div>
     <div class="section">
         <h2>Distribuição por Níveis de Colesterol</h2>
-        <p>Este é o texto descritivo abaixo do terceiro subtítulo. O conteúdo deve complementar a imagem logo abaixo.</p>
-        <img src="imagem3.png" alt="Descrição da imagem 3">
+        <p>Esta é a distribuição de doentes de acordo com os seus níveis de colesterol. Atente-se que "ND" significa "No Data" e representa o número de pacientes cujos níveis de colesterol são desconhecidos</p>
+        <img src="imagem3.png" alt="Barras colesterol doentes">
     </div>
     <div class="section">
         <h2>Correlação Tensão/Batimento e Doença</h2>
-        <p>Este é o texto descritivo abaixo do quarto subtítulo. Coloque aqui as informações adicionais desejadas.</p>
-        <img src="imagem4.png" alt="Correlações">
+        <p>Com auxílio de ambos os g´raficos abaixo podemos ver a correlação entre a Tensão e Batimentos com a doença.</p>
+        <img src="imagem4.png" alt="Correlação Tensão">
+        <img src="imagem5.png" alt="Correlação Batimentos">
     </div>
 </body>
 </html>
