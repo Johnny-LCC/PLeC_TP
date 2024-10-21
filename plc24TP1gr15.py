@@ -1,52 +1,128 @@
+'''
+Resolução do exercício 3 pelo Grupo 15
+João Fonseca - A102512
+Alexis Correia - A109524
+'''
 #Imports
 import re
 import matplotlib.pyplot as plt
 
-#Ex 3:
+#Variáveis
 num_linhas = 0
 doentes = 0
 masc, fem = 0, 0
-idades, escalao = [], {}
-#exp = "(\d+),([MF]),\d+,\d+,\d+,1$"
+idades = {}
+col = []
+tensao = {}
+bpm = {}
 
+#Leitura ficheiro
 myHeart = open("myheart.csv", "r")
 myHeart.readline()
-
 for linha in myHeart:
     num_linhas += 1
-    res = re.match(r'(\d+),([MF]),\d+,\d+,\d+,1$', linha)
+    res = re.match(r'(\d+),([MF]),(\d+),(\d+),(\d+),1$', linha) #ER
     if  res:
         doentes += 1
-        idades.append(int(res.group(1)))
+        
+        i = int(res.group(1))
+        e = (i//5)-6
+        if e not in idades.keys():
+            idades[e] = 1
+        else:
+            idades[e] += 1
+        
         if res.group(2) == "M":
             masc += 1
         else: 
             fem += 1
 
+        col.append(int(res.group(4)))
+
+        t, b = int(res.group(3)), int(res.group(5))
+        if t not in tensao.keys():
+            tensao[t] = 1
+        else:
+            tensao[t] += 1
+        if b not in bpm.keys():
+            bpm[b] = 1
+        else:
+            bpm[b] += 1
 myHeart.close()
 
+#Cálculos auxiliares
 p_doentes = (doentes/num_linhas)*100
 p_masc = (masc/doentes)*100
 p_fem = (fem/doentes)*100
 
-for i in idades:
-    e = (i//5)-6
-    if e not in escalao.keys():
-        escalao[e] = 1
+xidades, yidades = [],[]
+for x,y in sorted(idades.items()):
+    i = (x+6)*5
+    f = i+4
+    xidades.append(f"{i}-{f}")
+    yidades.append(y)
+
+dCol = {}
+for c in col:
+    if c>0:
+        c = (c//10)*10
+    if c not in dCol.keys():
+        dCol[c] = 1
     else:
-        escalao[e] += 1
+        dCol[c] += 1
+xcol, ycol = [], []
+for x,y in sorted(dCol.items()):
+    if c != 0:
+        xcol.append(f"{x}-{x+9}")
+    else:
+        xcol.append("ND")
+    ycol.append(y)
 
-fig, ax = plt.subplots()
+xtensao, ytensao = [], []
+for x,y in tensao.items():
+    xtensao.append(x)
+    ytensao.append(y)
 
-ax.pie([doentes,num_linhas-doentes])
-plt.legend(["Pacientes doentes", "Pacientes saudáveis"])
+xbpm, ybpm = [], []
+for x,y in bpm.items():
+    xbpm.append(x)
+    ybpm.append(y)
+
+#Matplotlib
+c = ["#0A4BBD","#0691D6"]
+
+plt.pie([doentes,num_linhas-doentes], colors=c, startangle=90)
+plt.legend(["Doentes", "Saudáveis"], title="Pacientes: ")
 plt.savefig("imagem.png")
+plt.close()
 
-ax.pie([masc, fem])
-plt.legend(["Masculino", "Feminino"])
+plt.pie([masc, fem], colors=c, startangle=90)
+plt.legend(["Masculino", "Feminino"], title = "Doentes por género: ")
 plt.savefig("imagem1.png")
+plt.close()
 
-#HTML
+plt.bar(xidades,yidades)
+plt.ylabel("Número doentes")
+plt.xlabel("Escalões Etários")
+plt.savefig("imagem2.png")
+plt.close()
+
+plt.bar(xcol,ycol)
+plt.xlabel("Nível colesterol")
+plt.ylabel("Número doentes")
+plt.savefig("imagem3.png")
+plt.close()
+
+plt.subplot(2,1,1)
+plt.plot(xtensao,ytensao)
+plt.title("Tensão")
+plt.subplot(2,1,2)
+plt.plot(xbpm, ybpm)
+plt.title("Batimentos")
+plt.savefig("imagem4.png")
+plt.close()
+
+#Ficheiro HTML
 conteudo_html = f"""<!DOCTYPE html>
 <html lang="eng">
 <head>
@@ -85,15 +161,15 @@ conteudo_html = f"""<!DOCTYPE html>
     <h1>Processador de registos de Doenças Cardíacas</h1>
     <div class="section">
         <h2>Doentes Totais e por Género</h2>
-        <p>Dentre os {num_linhas} pacientes, {doentes} encontram-se doentes. Isso representa {p_doentes:.2f}%</p>
+        <p>Dentre os {num_linhas} pacientes, {doentes} encontram-se doentes. Isso representa {p_doentes:.2f}% do total de pacientes.</p>
         <img src="imagem.png" alt="Porcentagem doentes">
-        <p>Dos {doentes} pacientes doentes, {masc} são homens e {fem} são mulheres. Isso representa, respetivamente {p_masc:.2f}% e {p_fem:.2f}%</p>
+        <p>Dos {doentes} pacientes doentes, {masc} são homens e {fem} são mulheres. Isso representa, respetivamente, {p_masc:.2f}% e {p_fem:.2f}% dos pacientes doentes.</p>
         <img src="imagem1.png" alt="Porcentagem homem/mulher">
     </div>
     <div class="section">
         <h2>Distribuição por Escalões Etários</h2>
-        <p>Abaixo podemos ver o gráfico.</p>
-        <img src="imagem2.png" alt="Descrição da imagem 2">
+        <p>Abaixo podemos ver o gráfico em barras que representa a distribuição dos doentes de acordo com seu Escalão de Idade.</p>
+        <img src="imagem2.png" alt="Barras idades doentes">
     </div>
     <div class="section">
         <h2>Distribuição por Níveis de Colesterol</h2>
@@ -103,11 +179,11 @@ conteudo_html = f"""<!DOCTYPE html>
     <div class="section">
         <h2>Correlação Tensão/Batimento e Doença</h2>
         <p>Este é o texto descritivo abaixo do quarto subtítulo. Coloque aqui as informações adicionais desejadas.</p>
-        <img src="imagem4.png" alt="Descrição da imagem 4">
+        <img src="imagem4.png" alt="Correlações">
     </div>
 </body>
 </html>
 """
-ficheiro = open("plc24TP1gr15.html", "w", encoding="utf-8")
+ficheiro = open("index.html", "w", encoding="utf-8")
 ficheiro.write(conteudo_html)
 ficheiro.close()
