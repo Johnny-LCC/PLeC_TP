@@ -1,7 +1,7 @@
 '''
 Resolução do exercício 3 pelo Grupo 15
 João Fonseca - A102512
-Alexis Correia - A109524
+Alexis Correia - A102495
 '''
 #Imports
 import re
