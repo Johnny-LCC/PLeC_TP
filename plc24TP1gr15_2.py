@@ -154,7 +154,7 @@ conteudo_html = f"""<!DOCTYPE html>
         <h2>Distribuição dos atletas por género</h2>
         <p>Dentre os {num_linha} atletas, {masc} são homens e {fem} são mulheres.</p>
         <img src="imagem1.png" alt="Pie Chart">
-        <p>Isso representa {pMasc}% e {pFem}% respetivamente<\p>
+        <p>Isso representa {pMasc:.2f}% e {pFem:.2f}% respetivamente<\p>
     </div>
     <div class="section">
         <h2>Distribuição das modalidades desportivas</h2>
