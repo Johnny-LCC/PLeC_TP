@@ -150,7 +150,11 @@ conteudo_html = f"""<!DOCTYPE html>
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }}
+        .img-container {{
+            text-align: center;
+        }}
         img {{
+            text-align: center;
             max-width: 100%;
             height: auto;
             border-radius: 5px;
@@ -162,25 +166,39 @@ conteudo_html = f"""<!DOCTYPE html>
     <div class="section">
         <h2>Doentes Totais e por Género</h2>
         <p>Dentre os {num_linhas} pacientes, {doentes} encontram-se doentes. Isso representa {p_doentes:.2f}% do total de pacientes.</p>
-        <img src="imagem.png" alt="Porcentagem doentes">
+        <div class="img-container">
+            <img src="imagem.png" alt="Porcentagem doentes">
+        </div>
         <p>Dos {doentes} pacientes doentes, {masc} são homens e {fem} são mulheres. Isso representa, respetivamente, {p_masc:.2f}% e {p_fem:.2f}% dos pacientes doentes.</p>
-        <img src="imagem1.png" alt="Porcentagem homem/mulher">
+        <div class="img-container">
+            <img src="imagem1.png" alt="Porcentagem homem/mulher">
+        </div>
     </div>
     <div class="section">
         <h2>Distribuição por Escalões Etários</h2>
         <p>Abaixo podemos ver o gráfico em barras que representa a distribuição dos doentes de acordo com seu Escalão de Idade.</p>
-        <img src="imagem2.png" alt="Barras idades doentes">
+        <div class"img-container">
+            <img src="imagem2.png" alt="Barras idades doentes">
+        </div>
     </div>
     <div class="section">
         <h2>Distribuição por Níveis de Colesterol</h2>
         <p>Esta é a distribuição de doentes de acordo com os seus níveis de colesterol. Atente-se que "ND" significa "No Data" e representa o número de pacientes cujos níveis de colesterol são desconhecidos.</p>
-        <img src="imagem3.png" alt="Barras colesterol doentes">
+        <div class="img-container">
+            <img src="imagem3.png" alt="Barras colesterol doentes">
+        </div>
     </div>
     <div class="section">
         <h2>Correlação Tensão/Batimento e Doença</h2>
         <p>Com auxílio de ambos os gráficos abaixo podemos ver a correlação entre a Tensão e Batimentos com a doença.</p>
-        <img src="imagem4.png" alt="Correlação Tensão">
-        <img src="imagem5.png" alt="Correlação Batimentos">
+        <p>Primeiro, veremos o gráfico que mostra a tensão (eixo x) e o número de paciente doentes correspondentes (eixo y).</p>
+        <div class="img-container">
+            <img src="imagem4.png" alt="Tensão">
+        </div>
+        <p>Em seguido, veremos a mesma coisa com os Batimentos dos pacientes.</p>
+        <div class="img-container">
+            <img src="imagem5.png" alt="Batimentos">
+        </div>
     </div>
 </body>
 </html>

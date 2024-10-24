@@ -59,10 +59,12 @@ for linha in emd:
 emd.close()
 
 #Cálculos auxiliares e Matplotlib
+c = ["#0A4BBD","#0691D6"]
+
 pMasc = (masc/num_linha)*100
 pFem = (fem/num_linha)*100
 
-plt.pie([masc,fem], startangle=90)
+plt.pie([masc,fem], colors=c, startangle=90)
 plt.legend(["Homens","Mulheres"])
 plt.savefig("imagem1.png")
 plt.close()
@@ -92,7 +94,7 @@ plt.close()
 for k in sorted(apts.keys()):
     apt = apts[k]
     rest = total[k] - apt
-    plt.pie([apt,rest], startangle=90)
+    plt.pie([apt,rest], colors=c, startangle=90)
     plt.legend(["Aptos", "Não aptos"])
     plt.title(f"Aptos - {k}")
     plt.savefig(f"imagem3-{k}.png")
@@ -135,12 +137,17 @@ conteudo_html = f"""<!DOCTYPE html>
             width: 500px;
             height: auto;
         }}
-
         .thumbnail {{
             width: 100px;
             height: auto;
             cursor: pointer;
             margin: 10px;
+        }}
+        .thumbnail-container {{
+            text-align: center;
+        }}
+        .img.container{{
+            text-align: center;
         }}
     </style>
 </head>
@@ -153,14 +160,18 @@ conteudo_html = f"""<!DOCTYPE html>
     <div class="section">
         <h2>Distribuição dos atletas por género</h2>
         <p>Dentre os {num_linha} atletas, {masc} são homens e {fem} são mulheres.</p>
-        <img src="imagem1.png" alt="Pie Chart">
+        div class="img-container">
+            <img src="imagem1.png" alt="Pie Chart">
+        </div>
         <p>Isso representa {pMasc:.2f}% e {pFem:.2f}% respetivamente<\p>
     </div>
     <div class="section">
         <h2>Distribuição das modalidades desportivas</h2>
         <p>Texto.</p>
-        <img id="imagemPrincipal1" class="main-image" src="imagem2-total.png" alt="Imagem Principal">
-        <div>
+        <div class="img-container">
+            <img id="imagemPrincipal1" class="main-image" src="imagem2-total.png" alt="Imagem Principal">
+        </div>
+        <div class="thumbnail-container">
             <img class="thumbnail" src="imagem2-2019.png" alt="Imagem 1" onclick="trocarImagem('imagem2-2019.png')">
             <img class="thumbnail" src="imagem2-2020.png" alt="Imagem 2" onclick="trocarImagem('imagem2-2020.png')">
             <img class="thumbnail" src="imagem2-2021.png" alt="Imagem 3" onclick="trocarImagem('imagem2-2021.png')">
@@ -175,8 +186,10 @@ conteudo_html = f"""<!DOCTYPE html>
     <div class="section">
         <h2>Aptos</h2>
         <p>Texto.</p>
-        <img id="imagemPrincipal2" class="main-image" src="imagem3-2019.png" alt="Imagem Principal">
-        <div>
+        <div class="img-container">
+            <img id="imagemPrincipal2" class="main-image" src="imagem3-2019.png" alt="Imagem Principal">
+        </div>
+        <div class="thumbnail-container">
             <img class="thumbnail" src="imagem3-2019.png" alt="Imagem 1" onclick="trocarImagem2('imagem3-2019.png')">
             <img class="thumbnail" src="imagem3-2020.png" alt="Imagem 2" onclick="trocarImagem2('imagem3-2020.png')">
             <img class="thumbnail" src="imagem3-2021.png" alt="Imagem 3" onclick="trocarImagem2('imagem3-2021.png')">
