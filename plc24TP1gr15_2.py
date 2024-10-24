@@ -70,6 +70,7 @@ plt.savefig("imagem1.png")
 plt.close()
 
 mods = {}
+anos = []
 for a in sorted(modsAno.keys()):
     x, y = [], []
     for m in sorted(modsAno[a].keys()):
@@ -83,6 +84,7 @@ for a in sorted(modsAno.keys()):
     plt.title(f"{a}")
     plt.savefig(f"imagem2-{a}.png")
     plt.close()
+    anos.append(a)
 xmod = [i[0] for i in sorted(mods.items())]
 ymod = [i[1] for i in sorted(mods.items())]
 plt.figure(figsize=(10,8))
@@ -101,6 +103,7 @@ for k in sorted(apts.keys()):
     plt.close()
 
 #Ficheiro HTML
+anos.sort()
 conteudo_html = f"""<!DOCTYPE html>
 <html lang="eng">
 <head>
@@ -161,7 +164,7 @@ conteudo_html = f"""<!DOCTYPE html>
     <div class="section">
         <h2>Distribuição dos atletas por género</h2>
         <p>Dentre os {num_linha} atletas, {masc} são homens e {fem} são mulheres.</p>
-        div class="img-container">
+        <div class="img-container">
             <img src="imagem1.png" alt="Pie Chart">
         </div>
         <p>Isso representa {pMasc:.2f}% e {pFem:.2f}% respetivamente<\p>
@@ -172,11 +175,12 @@ conteudo_html = f"""<!DOCTYPE html>
         <div class="img-container">
             <img id="imagemPrincipal1" class="main-image" src="imagem2-total.png" alt="Imagem Principal">
         </div>
-        <div class="thumbnail-container">
-            <img class="thumbnail" src="imagem2-2019.png" alt="Imagem 1" onclick="trocarImagem('imagem2-2019.png')">
-            <img class="thumbnail" src="imagem2-2020.png" alt="Imagem 2" onclick="trocarImagem('imagem2-2020.png')">
-            <img class="thumbnail" src="imagem2-2021.png" alt="Imagem 3" onclick="trocarImagem('imagem2-2021.png')">
-            <img class="thumbnail" src="imagem2-total.png" alt="Imagem 3" onclick="trocarImagem('imagem2-total.png')">
+        <div class="thumbnail-container">"""
+for a in anos:
+    conteudo_html = conteudo_html + f"""
+            <img class="thumbnail" src="imagem2-{a}.png" alt="Modalidades {a}" onclick="trocarImagem('imagem2-{a}.png')">"""
+conteudo_html = conteudo_html +  f"""
+            <img class="thumbnail" src="imagem2-total.png" alt="Modalidades" onclick="trocarImagem('imagem2-total.png')">
         </div>
     </div>
     <script>
@@ -188,12 +192,13 @@ conteudo_html = f"""<!DOCTYPE html>
         <h2>Aptos</h2>
         <p>Texto.</p>
         <div class="img-container">
-            <img id="imagemPrincipal2" class="main-image" src="imagem3-2019.png" alt="Imagem Principal">
+            <img id="imagemPrincipal2" class="main-image" src="imagem3-{anos[0]}.png" alt="Imagem Principal">
         </div>
-        <div class="thumbnail-container">
-            <img class="thumbnail" src="imagem3-2019.png" alt="Imagem 1" onclick="trocarImagem2('imagem3-2019.png')">
-            <img class="thumbnail" src="imagem3-2020.png" alt="Imagem 2" onclick="trocarImagem2('imagem3-2020.png')">
-            <img class="thumbnail" src="imagem3-2021.png" alt="Imagem 3" onclick="trocarImagem2('imagem3-2021.png')">
+        <div class="thumbnail-container">"""
+for a in anos:
+    conteudo_html = conteudo_html + f"""
+            <img class="thumbnail" src="imagem3-{a}.png" alt="Aptos - {a}" onclick="trocarImagem2('imagem3-{a}.png')">"""
+conteudo_html = conteudo_html +  """
         </div>
     </div>
     <script>
@@ -202,8 +207,7 @@ conteudo_html = f"""<!DOCTYPE html>
         }}
     </script>
 </body>
-</html>
-"""
+</html>"""
 ficheiro = open("index.html", "w", encoding="utf-8")
 ficheiro.write(conteudo_html)
 ficheiro.close()
