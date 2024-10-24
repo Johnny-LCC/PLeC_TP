@@ -5,16 +5,18 @@ Alexis Correia - A102495
 '''
 #Imports
 import re
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 #Variáveis
 num_linha = 0
 minIdade, maxIdade = 1000, 0
 masc, fem = 0, 0
 modsAno = {}
+apts, total = {}, {}
+
 er1 = ",(\d+),([MF]),"
 er2 = ",(\d{4})-\d{2}-\d{2},.+,[MF],[A-z]+,([A-zãçé]+),"
-#"[a-z0-9]+,\d+,\d{4}-\d{2}-\d{2},[A-z]+,[A-z]+,\d+,[MF],[A-z]+,[A-z]+,[A-z]+,[A-zã@\.]+,true|false,true|false"
+er3 = ".+,(\d{4})-\d{2}-\d{2},.+,(true|false)$"
 
 #Leitura ficheiro
 emd = open("emd.csv", "r")
@@ -40,29 +42,52 @@ for linha in emd:
         mod = res2.group(2)
         if ano not in modsAno.keys():
             modsAno[ano] = {}
-            modsAno[ano][mod] = 1
-        else:
-            if mod not in modsAno[ano].keys():
-                modsAno[ano][mod] = 1
-            else:
-                modsAno[ano][mod] += 1
+        if mod not in modsAno[ano].keys():
+            modsAno[ano][mod] = 0
+        modsAno[ano][mod] += 1
 
+    res3 = re.match(rf'{er3}', linha)
+    if res3:
+        ano = int(res3.group(1))
+        if ano not in apts.keys():
+            apts[ano] = 0
+        if ano not in total.keys():
+            total[ano] = 0
+        total[ano] += 1
+        if res3.group(2) == 'true':
+            apts[ano] += 1
 emd.close()
 
-print(f"Min: {minIdade}, Max: {maxIdade}")
-print(f"Num_Total: {num_linha}, Homens: {masc}, Mulheres: {fem}")
-for k in modsAno.keys():
-    print(f"{k}: {modsAno[k]}")
-'''
-#Cálculos auxiliares
+#Cálculos auxiliares e Matplotlib
 pMasc = (masc/num_linha)*100
 pFem = (fem/num_linha)*100
 
-#Matplotlib
 plt.pie([masc,fem], startangle=90)
 plt.legend(["Homens","Mulheres"])
 plt.savefig("imagem1.png")
 plt.close()
+
+mods = {}
+for a in sorted(modsAno.keys()):
+    x, y = [], []
+    for m in sorted(modsAno[a].keys()):
+        x.append(m)
+        y.append(modsAno[a][m])
+        if m not in mods.keys():
+            mods[m] = 0
+        mods[m]+=modsAno[a][m]
+    plt.barh(x,y) ##
+    plt.title(f"{a}")
+    plt.savefig(f"imagem2-{a}.png")
+    plt.close()
+xmod = [i[0] for i in sorted(mods.items())]
+ymod = [i[1] for i in sorted(mods.items())]
+plt.barh(xmod,ymod) ##
+plt.title("Total")
+plt.savefig("imagem2-total.png")
+
+for k in apts.keys():
+    print(f"{k}: {apts[k]}/{total[k]}") ##
 
 #Ficheiro HTML
 conteudo_html = f"""<!DOCTYPE html>
@@ -112,14 +137,14 @@ conteudo_html = f"""<!DOCTYPE html>
         <p>Isso representa {pMasc}% e {pFem}% respetivamente<\p>
     </div>
     <div class="section">
-        <h2>Distribuição por Níveis de Colesterol</h2>
+        <h2>Distribuição das modalidades desportivas</h2>
         <p>Texto.</p>
-        <img src="imagem3.png" alt="Barras colesterol doentes">
+        <img src="imagem2.png" alt="mods">
     </div>
     <div class="section">
-        <h2>Correlação Tensão/Batimento e Doença</h2>
+        <h2>Aptos</h2>
         <p>Texto.</p>
-        <img src="imagem4.png" alt="Correlação Tensão">
+        <img>
     </div>
 </body>
 </html>
@@ -127,4 +152,3 @@ conteudo_html = f"""<!DOCTYPE html>
 ficheiro = open("index.html", "w", encoding="utf-8")
 ficheiro.write(conteudo_html)
 ficheiro.close()
-'''
