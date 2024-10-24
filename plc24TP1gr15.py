@@ -177,7 +177,7 @@ conteudo_html = f"""<!DOCTYPE html>
     <div class="section">
         <h2>Distribuição por Escalões Etários</h2>
         <p>Abaixo podemos ver o gráfico em barras que representa a distribuição dos doentes de acordo com seu Escalão de Idade.</p>
-        <div class"img-container">
+        <div class="img-container">
             <img src="imagem2.png" alt="Barras idades doentes">
         </div>
     </div>

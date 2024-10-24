@@ -146,8 +146,9 @@ conteudo_html = f"""<!DOCTYPE html>
         .thumbnail-container {{
             text-align: center;
         }}
-        .img.container{{
+        .img-container{{
             text-align: center;
+            margin-bottom: 20px;
         }}
     </style>
 </head>
