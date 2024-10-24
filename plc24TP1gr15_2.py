@@ -76,18 +76,27 @@ for a in sorted(modsAno.keys()):
         if m not in mods.keys():
             mods[m] = 0
         mods[m]+=modsAno[a][m]
-    plt.barh(x,y) ##
+    plt.figure(figsize=(10,8))
+    plt.barh(x[::-1],y[::-1])
     plt.title(f"{a}")
     plt.savefig(f"imagem2-{a}.png")
     plt.close()
 xmod = [i[0] for i in sorted(mods.items())]
 ymod = [i[1] for i in sorted(mods.items())]
-plt.barh(xmod,ymod) ##
+plt.figure(figsize=(10,8))
+plt.barh(xmod[::-1],ymod[::-1])
 plt.title("Total")
 plt.savefig("imagem2-total.png")
+plt.close()
 
-for k in apts.keys():
-    print(f"{k}: {apts[k]}/{total[k]}") ##
+for k in sorted(apts.keys()):
+    apt = apts[k]
+    rest = total[k] - apt
+    plt.pie([apt,rest], startangle=90)
+    plt.legend(["Aptos", "Não aptos"])
+    plt.title(f"Aptos - {k}")
+    plt.savefig(f"imagem3-{k}.png")
+    plt.close()
 
 #Ficheiro HTML
 conteudo_html = f"""<!DOCTYPE html>
@@ -122,6 +131,17 @@ conteudo_html = f"""<!DOCTYPE html>
             height: auto;
             border-radius: 5px;
         }}
+        .main-image {{
+            width: 500px;
+            height: auto;
+        }}
+
+        .thumbnail {{
+            width: 100px;
+            height: auto;
+            cursor: pointer;
+            margin: 10px;
+        }}
     </style>
 </head>
 <body>
@@ -139,13 +159,34 @@ conteudo_html = f"""<!DOCTYPE html>
     <div class="section">
         <h2>Distribuição das modalidades desportivas</h2>
         <p>Texto.</p>
-        <img src="imagem2.png" alt="mods">
+        <img id="imagemPrincipal1" class="main-image" src="imagem2-total.png" alt="Imagem Principal">
+        <div>
+            <img class="thumbnail" src="imagem2-2019.png" alt="Imagem 1" onclick="trocarImagem('imagem2-2019.png')">
+            <img class="thumbnail" src="imagem2-2020.png" alt="Imagem 2" onclick="trocarImagem('imagem2-2020.png')">
+            <img class="thumbnail" src="imagem2-2021.png" alt="Imagem 3" onclick="trocarImagem('imagem2-2021.png')">
+            <img class="thumbnail" src="imagem2-total.png" alt="Imagem 3" onclick="trocarImagem('imagem2-total.png')">
+        </div>
     </div>
+    <script>
+        function trocarImagem(src) {{
+            document.getElementById('imagemPrincipal1').src = src;
+        }}
+    </script>
     <div class="section">
         <h2>Aptos</h2>
         <p>Texto.</p>
-        <img>
+        <img id="imagemPrincipal2" class="main-image" src="imagem3-2019.png" alt="Imagem Principal">
+        <div>
+            <img class="thumbnail" src="imagem3-2019.png" alt="Imagem 1" onclick="trocarImagem2('imagem3-2019.png')">
+            <img class="thumbnail" src="imagem3-2020.png" alt="Imagem 2" onclick="trocarImagem2('imagem3-2020.png')">
+            <img class="thumbnail" src="imagem3-2021.png" alt="Imagem 3" onclick="trocarImagem2('imagem3-2021.png')">
+        </div>
     </div>
+    <script>
+        function trocarImagem2(src) {{
+            document.getElementById('imagemPrincipal2').src = src;
+        }}
+    </script>
 </body>
 </html>
 """
