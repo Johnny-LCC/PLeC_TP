@@ -173,7 +173,7 @@ conteudo_html = f"""<!DOCTYPE html>
         <div class="img-container">
             <img src="imagem1.png" alt="Pie Chart">
         </div>
-        <p>Isso representa {pMasc:.2f}% e {pFem:.2f}% respetivamente<\p>
+        <p>Isso representa {pMasc:.2f}% e {pFem:.2f}% respetivamente</p>
     </div>
     <div class="section">
         <h2>Distribuição das modalidades desportivas</h2>
@@ -219,6 +219,11 @@ ficheiro.write(conteudo_html)
 ficheiro.close()
 
 json = """["""
-for a,n in nomes:
-    json = json + f"""\n{{"apelido":"{a}", "nome":"{n}"}}"""
+for i in range(len(nomes)):
+    json = json + f"""\n    {{"apelido":"{nomes[i][0]}", "nome":"{nomes[i][1]}"}}"""
+    if i < len(nomes)-1:
+        json = json + ","
 json = json + """\n]"""
+ficheiro = open("nomes.json", "w", encoding="utf-8")
+ficheiro.write(json)
+ficheiro.close()
