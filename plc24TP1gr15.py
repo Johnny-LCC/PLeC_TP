@@ -61,7 +61,8 @@ for linha in emd:
 
     res4 = re.search(rf'{er4}', linha)
     if res4:
-        nomes.append((res4.group(1),res4.group(2)))
+        if len(res4.group(2))<=len(res4.group(1)) or (res4.group(1)[0])<=(res4.group(2)[0]):
+            nomes.append((res4.group(1),res4.group(2)))
 emd.close()
 
 #Cálculos auxiliares e Matplotlib
@@ -175,7 +176,8 @@ conteudo_html = f"""<!DOCTYPE html>
     </div>
     <div class="section">
         <h2>Distribuição das modalidades desportivas</h2>
-        <p>Texto.</p>
+        <p>Dos {num_linha} desportistas, nem todos praticam os mesmos esportes.</p>
+        <p>Nos gráficos abaixo, podemos ver a distribuição dos atletas nas diferentes modalidades ao longo dos anos</p>
         <div class="img-container">
             <img id="imagemPrincipal1" class="main-image" src="imagem2-total.png" alt="Imagem Principal">
         </div>
@@ -194,7 +196,8 @@ conteudo_html = conteudo_html +  f"""
     </script>
     <div class="section">
         <h2>Aptos</h2>
-        <p>Texto.</p>
+        <p>Nem todos os atletas passam nos seus exames médicos.</p>
+        <p>Abaixo, podemos ver a proporção de desportistas adeptos e não adeptos em cada ano.</p>
         <div class="img-container">
             <img id="imagemPrincipal2" class="main-image" src="imagem3-{anos[0]}.png" alt="Imagem Principal">
         </div>
@@ -216,12 +219,12 @@ ficheiro = open("index.html", "w", encoding="utf-8")
 ficheiro.write(conteudo_html)
 ficheiro.close()
 
-json = """["""
+json = "["
 for i in range(len(nomes)):
-    json = json + f"""\n    {{"apelido":"{nomes[i][0]}", "nome":"{nomes[i][1]}"}}"""
+    json = json + f"\n    {{\"apelido\":\"{nomes[i][0]}\", \"nome\":\"{nomes[i][1]}\"}}"
     if i < len(nomes)-1:
         json = json + ","
-json = json + """\n]"""
+json = json + "\n]"
 ficheiro = open("nomes.json", "w", encoding="utf-8")
 ficheiro.write(json)
 ficheiro.close()

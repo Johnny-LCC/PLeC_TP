@@ -70,7 +70,7 @@ for c in col:
         dCol[c] += 1
 xcol, ycol = [], []
 for x,y in sorted(dCol.items()):
-    if c != 0:
+    if c >= 10:
         xcol.append(f"{x}-{x+9}")
     else:
         xcol.append("ND")
@@ -110,14 +110,13 @@ plt.xlabel("Número doentes")
 plt.savefig("imagem3.png")
 plt.close()
 
-plt.plot(xtensao,ytensao)
+plt.subplot(1,2,1)
+plt.plot(xtensao,ytensao) ###
 plt.title("Tensão")
-plt.savefig("imagem4.png")
-plt.close()
-
-plt.plot(xbpm, ybpm)
+plt.subplot(1,2,2)
+plt.plot(xbpm, ybpm) ###
 plt.title("Batimentos")
-plt.savefig("imagem5.png")
+plt.savefig("imagem4.png")
 plt.close()
 
 #Ficheiro HTML
@@ -181,7 +180,7 @@ conteudo_html = f"""<!DOCTYPE html>
     </div>
     <div class="section">
         <h2>Distribuição por Níveis de Colesterol</h2>
-        <p>Esta é a distribuição de doentes de acordo com os seus níveis de colesterol. Atente-se que "ND" significa "No Data" e representa o número de pacientes cujos níveis de colesterol são desconhecidos.</p>
+        <p>Este é o gráfico que apresenta a distribuição de doentes de acordo com os seus níveis de colesterol.</p>
         <div class="img-container">
             <img src="imagem3.png" alt="Barras colesterol doentes">
         </div>
@@ -189,14 +188,11 @@ conteudo_html = f"""<!DOCTYPE html>
     <div class="section">
         <h2>Correlação Tensão/Batimento e Doença</h2>
         <p>Com auxílio de ambos os gráficos abaixo podemos ver a correlação entre a Tensão e Batimentos com a doença.</p>
-        <p>Primeiro, veremos o gráfico que mostra a tensão (eixo x) e o número de paciente doentes correspondentes (eixo y).</p>
+        <p>No eixo x, podemos ver a tensão/batimentos e, no eixo y, o número de paciente doentes correspondentes.</p>
         <div class="img-container">
-            <img src="imagem4.png" alt="Tensão">
+            <img src="imagem4.png" alt="Tensão/Batimentos">
         </div>
-        <p>Em seguido, veremos a mesma coisa com os Batimentos dos pacientes.</p>
-        <div class="img-container">
-            <img src="imagem5.png" alt="Batimentos">
-        </div>
+        <p>Podemos notar, em ambos os gráficos, o intervalo no qual há um pico de pacientes doentes.</p>
     </div>
 </body>
 </html>
