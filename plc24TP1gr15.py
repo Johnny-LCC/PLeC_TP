@@ -228,3 +228,4 @@ json = json + "\n]"
 ficheiro = open("nomes.json", "w", encoding="utf-8")
 ficheiro.write(json)
 ficheiro.close()
+print("Ficheiro HTML pronto.")

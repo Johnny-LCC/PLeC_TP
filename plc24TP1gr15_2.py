@@ -200,3 +200,4 @@ conteudo_html = f"""<!DOCTYPE html>
 ficheiro = open("index.html", "w", encoding="utf-8")
 ficheiro.write(conteudo_html)
 ficheiro.close()
+print("ficheiro HTML pronto")
