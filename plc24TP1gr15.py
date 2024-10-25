@@ -65,8 +65,6 @@ for linha in emd:
 emd.close()
 
 #Cálculos auxiliares e Matplotlib
-c = ["#0A4BBD","gray"] # #0691D6
-
 pMasc = (masc/num_linha)*100
 pFem = (fem/num_linha)*100
 
@@ -102,7 +100,7 @@ plt.close()
 for k in sorted(apts.keys()):
     apt = apts[k]
     rest = total[k] - apt
-    plt.pie([apt,rest], colors=c, startangle=90, explode=[0.05,0.05])
+    plt.pie([apt,rest], startangle=90, explode=[0.05,0.05])
     plt.legend(["Aptos", "Não aptos"])
     plt.title(f"Aptos - {k}")
     plt.savefig(f"imagem3-{k}.png")
