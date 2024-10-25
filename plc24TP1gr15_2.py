@@ -13,10 +13,12 @@ minIdade, maxIdade = 1000, 0
 masc, fem = 0, 0
 modsAno = {}
 apts, total = {}, {}
+nomes = []
 
 er1 = ",(\d+),([MF]),"
 er2 = ",(\d{4})-\d{2}-\d{2},.+,[MF],[A-z]+,([A-zãçé]+),"
 er3 = ".+,(\d{4})-\d{2}-\d{2},.+,(true|false)$"
+er4 = "([A-Z][A-z]+),([A-Z][A-z]+),\d+,M"
 
 #Leitura ficheiro
 emd = open("emd.csv", "r")
@@ -56,6 +58,10 @@ for linha in emd:
         total[ano] += 1
         if res3.group(2) == 'true':
             apts[ano] += 1
+
+    res4 = re.search(rf'{er4}', linha)
+    if res4:
+        nomes.append((res4.group(1),res4.group(2)))
 emd.close()
 
 #Cálculos auxiliares e Matplotlib
@@ -109,7 +115,7 @@ conteudo_html = f"""<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ex3</title>
+    <title>Ex2</title>
     <style>
         body {{
             font-family: Arial, sans-serif;
@@ -156,7 +162,7 @@ conteudo_html = f"""<!DOCTYPE html>
     </style>
 </head>
 <body>
-    <h1>Processador de registos de Doenças Cardíacas</h1>
+    <h1>Exames Médicos Desportivos</h1>
     <div class="section">
         <h2>Idades Extremas do Dataset</h2>
         <p>Neste dataset, a idade mínima é {minIdade} e a idade máxima é {maxIdade}.</p>
@@ -211,3 +217,8 @@ conteudo_html = conteudo_html +  """
 ficheiro = open("index.html", "w", encoding="utf-8")
 ficheiro.write(conteudo_html)
 ficheiro.close()
+
+json = """["""
+for a,n in nomes:
+    json = json + f"""\n{{"apelido":"{a}", "nome":"{n}"}}"""
+json = json + """\n]"""
