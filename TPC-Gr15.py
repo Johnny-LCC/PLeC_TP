@@ -3,6 +3,8 @@ import ply.lex as lex
 reserved = {
     'if': 'IF',
     'else': 'ELSE',
+    'not': 'NOT',
+    'elif': 'ELIF',
     'while': 'WHILE',
     'for': 'FOR',
     'def': 'DEF',
