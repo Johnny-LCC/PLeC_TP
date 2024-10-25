@@ -127,7 +127,7 @@ conteudo_html = f"""<!DOCTYPE html>
             color: #333;
         }}
         h2 {{
-            color: #0A4BBD;
+            color: #385ea1;
         }}
         .section {{
             margin-bottom: 30px;
