@@ -3,10 +3,9 @@ import sys
 
 literals = ['(' , ')' , '{' , '}', ';' , ',' , '[' , ']' , '#', '<', '>']
 
-tokens = ('ID','STRING', 'INT', 'FLOAT',
-          'ADD','SUB', 'MUL', 'DIV', 'EQ', 'PRINT',
-          'ATRIBUICAO', 'TIPO', 'INCLUDE', 'BIBLIO',
-           'IF', 'ELSE', 'FOR', 'WHILE', 'RETURN')
+tokens = ('ID','CHAR', 'INT', 'FLOAT', 'ATRIBUICAO', 'TIPO',
+          'ADD','SUB', 'MUL', 'DIV', 'EQ', 'NEQ', 'WRITE', 'READ',
+          'INCLUDE', 'BIBLIO', 'IF', 'ELSE', 'FOR', 'WHILE', 'RETURN')
 
 def t_ADD(t):
     r'\+'
@@ -28,12 +27,16 @@ def t_EQ(t):
     r'=='
     return t
 
+def t_NEQ(t):
+    r'\!='
+    return t
+
 def t_ATRIBUICAO(t):
     r'=(?!=)'
     return t
 
 def t_TIPO(t):
-    r'String|int|float'
+    r'char|int|float|void'
     return t
 
 def t_INCLUDE(t):
@@ -60,16 +63,20 @@ def t_RETURN(t):
     r'return'
     return t
 
-def t_PRINT(t):
+def t_WRITE(t):
     r'printf'
+    return t
+
+def t_READ(t):
+    r'scanf'
     return t
 
 def t_BIBLIO(t):
     r'[A-z0-9][A-z0-9_-]*\.h'
     return t
 
-def t_STRING(t):
-    r'\"(.*)\"'
+def t_CHAR(t):
+    r'\"[A-z]\"'
     return t
 
 def t_INT(t):
@@ -81,7 +88,7 @@ def t_FLOAT(t):
     return t
 
 def t_ID(t):
-    r'[a-z][A-z0-9_]*'
+    r'[A-z][A-z0-9_]*'
     return t
 
 t_ignore = ' \n\t'
@@ -96,7 +103,12 @@ int main(){
     a = 5;
     b = 6;
     c = a - b;
-    printf("%d", c);
+    if (c != b){
+        printf("%d", c);
+    }
+    else{
+        printf("%d %d", a, b)
+    }
     return 0
 }
 """
