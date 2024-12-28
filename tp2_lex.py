@@ -3,7 +3,7 @@ import sys
 
 literals = ['(' , ')' , '{' , '}', ';' , ',' , '[' , ']' , '#', '<', '>']
 
-tokens = ('ID','CHAR', 'INT', 'FLOAT', 'ATRIBUICAO', 'TIPO',
+tokens = ('ID','CHAR', 'INT', 'FLOAT', 'ATRIBUICAO', 'TIPO', 'STRING'
           'ADD','SUB', 'MUL', 'DIV', 'EQ', 'NEQ', 'WRITE', 'READ',
           'INCLUDE', 'BIBLIO', 'IF', 'ELSE', 'FOR', 'WHILE', 'RETURN')
 
@@ -79,6 +79,10 @@ def t_CHAR(t):
     r'\"[A-z]\"'
     return t
 
+def t_STRING(t):
+    r'\".+\"'
+    return t
+
 def t_INT(t):
     r'[0-9]+(?!\.)'
     return t
@@ -107,9 +111,9 @@ int main(){
         printf("%d", c);
     }
     else{
-        printf("%d %d", a, b)
+        printf("%d %d", a, b);
     }
-    return 0
+    return 0;
 }
 """
 
