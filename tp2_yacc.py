@@ -5,44 +5,44 @@ from tp2_lex import tokens
 
 def p_tp2_grammar(p):
     """
-    program : includes declarations statements
-includes : include includes
-         | include
-include : INCLUDE BIBLIO
-declarations : declaration declarations
-             | declaration
-declaration : TIPO var_list ';'
-var_list : ID
-         | var_list ',' ID
-statements : statement
-           | statements statement
-statement : ID ATRIBUICAO expression ';'
-          | WRITE '(' expression ')' ';'
-          | WRITE '(' STRING ')' ';'
-          | IF '(' condition ')' '{' statements '}' ELSE '{' statements '}'
-          | IF '(' condition ')' '{' statements '}'
-          | WHILE '(' condition ')' '{' statements '}'
-          | FOR '(' ID ATRIBUICAO expression ';' condition ';' expression ')' '{' statements '}'
-          | RETURN expression ';'
-expression : expression ADD expression
-           | expression SUB expression
-           | expression MUL expression
-           | expression DIV expression
-           | '(' expression ')'
-           | ID
-           | INT
-           | FLOAT
-           | CHAR
-condition : expression EQ expression
-          | expression NEQ expression
-          | expression LT expression
-          | expression LE expression
-          | expression GT expression
-          | expression GE expression
-          | '(' condition ')'
-          | condition AND condition
-          | condition OR condition
-          | NOT condition
+    Program : Includes Declarations Statements
+    Includes : Include Includes
+            | Include
+    Include : INCLUDE BIBLIO
+    Declarations : Declaration Declarations
+                 | Declaration
+    Declaration : TIPO VarList ';'
+    VarList : ID
+            | VarList ',' ID
+    Statements : Statement
+               | Statements Statement
+    Statement : ID ATRIBUICAO Expression ';'   
+              | WRITE '(' Expression ')' ';'
+              | WRITE '(' STRING ')' ';'
+              | IF '(' Condition ')' '{' Statements '}' ELSE '{' Statements '}'
+              | IF '(' Condition ')' '{' Statements '}'
+              | WHILE '(' Condition ')' '{' Statements '}'
+              | FOR '(' ID ATRIBUICAO Expression ';' Condition ';' Expression ')' '{' Statements '}'
+              | RETURN Expression ';'
+    Expression : Expression ADD Expression
+               | Expression SUB Expression
+               | Expression MUL Expression
+               | Expression DIV Expression
+               | '(' Expression ')'
+               | ID
+               | INT
+               | FLOAT
+               | CHAR
+    Condition : Expression EQ Expression
+              | Expression NEQ Expression
+              | Expression LT Expression
+              | Expression LE Expression
+              | Expression GT Expression
+              | Expression GE Expression
+              | '(' Condition ')'
+              | Condition AND Condition
+              | Condition OR Condition
+              | NOT Condition
     """
 
 def p_error(p):
