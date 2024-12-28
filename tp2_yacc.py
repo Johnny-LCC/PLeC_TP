@@ -1,3 +1,9 @@
+'''
+Grupo 15
+João Fonseca - A102512
+Alexis Correia - A102495
+'''
+
 import ply.yacc as yacc
 import sys
 
@@ -53,8 +59,9 @@ parser = yacc.yacc()
 parser.exito = True
 
 fonte = ""
-for linha in sys.stdin:
+c = open("teste.c", "r")
+for linha in c:
     fonte += linha
-
+c.close()
 if parser.exito:
     print("Parsing terminou com sucesso.")

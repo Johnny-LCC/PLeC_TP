@@ -1,3 +1,9 @@
+'''
+Grupo 15
+João Fonseca - A102512
+Alexis Correia - A102495
+'''
+
 import ply.lex as lex
 import sys
 
@@ -9,6 +15,14 @@ tokens = ('ID','CHAR', 'INT', 'FLOAT', 'TIPO',
           'WRITE','READ', 'INCLUDE', 'BIBLIO',
           'IF', 'ELSE', 'FOR', 'WHILE','RETURN',
           'COMENT', 'ATRIBUICAO', 'NOT', 'AND', 'OR')
+
+def t_COMENT(t):
+    r'//[^\n]*|(/\*(.*)\*/)'
+    return t
+
+def t_BIBLIO(t):
+    r'<[A-z0-9][A-z0-9_-]*\.h>'
+    return t
 
 def t_ADD(t):
     r'\+'
@@ -23,7 +37,7 @@ def t_MUL(t):
     return t
 
 def t_DIV(t):
-    r'/(/)?'
+    r'/'
     return t
 
 def t_EQ(t):
@@ -59,7 +73,7 @@ def t_AND(t):
     return t
 
 def t_OR(t):
-    r'||'
+    r'\|\|'
     return t
 
 def t_ATRIBUICAO(t):
@@ -71,7 +85,7 @@ def t_TIPO(t):
     return t
 
 def t_INCLUDE(t):
-    r'#[ ]?include'
+    r'\#[ ]?include'
     return t
 
 def t_IF(t):
@@ -102,10 +116,6 @@ def t_READ(t):
     r'scanf'
     return t
 
-def t_BIBLIO(t):
-    r'<[A-z0-9][A-z0-9_-]*\.h>'
-    return t
-
 def t_CHAR(t):
     r'\"[A-z]\"'
     return t
@@ -126,34 +136,17 @@ def t_ID(t):
     r'[A-z][A-z0-9_]*'
     return t
 
-def t_COMENT(t):
-    r'//[^\n]*|/\*.*\*/'
-    return t
-
 t_ignore = ' \n\t'
 
 def t_error(t):
     print('Illegal character: ', t.value[0])
     t.lexer.skip(1)
 
-linha = """#include <stdio.h>
-
-int main(){
-    a = 5;
-    b = 6;
-    c = a - b;
-    if (c != b && a > b){
-        printf("%d", c);
-    }
-    else{
-        printf("%d %d", a, b);
-    }
-    return 0;
-}
-"""
-
 lexer = lex.lex()
-
-lexer.input(linha) 
-for tok in lexer:
-    print(tok)
+c = open("teste.c", "r")
+for linha in c:
+    lexer.input(linha) 
+    for tok in lexer:
+        print(tok)
+c.close()
+print("Fim (Lexer)")
