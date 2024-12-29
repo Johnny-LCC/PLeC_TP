@@ -12,16 +12,16 @@ from tp2_lex import tokens
 def p_tp2_grammar(p):
     """
     Program : Includes Declarations Statements
-    Includes : Include Includes
-            | Include
+    Includes : Include
+            | Include Includes
     Include : INCLUDE BIBLIO
-    Declarations : Declaration Declarations
-                 | Declaration
+    Declarations : Declaration
+                 | Declaration Declarations
     Declaration : TIPO VarList ';'
     VarList : ID
-            | VarList ',' ID
+            | ID ',' VarList
     Statements : Statement
-               | Statements Statement
+               | Statement Statements
     Statement : ID ATRIBUICAO Expression ';'   
               | WRITE '(' Expression ')' ';'
               | WRITE '(' STRING ')' ';'
@@ -38,7 +38,6 @@ def p_tp2_grammar(p):
                | ID
                | INT
                | FLOAT
-               | CHAR
     Condition : Expression EQ Expression
               | Expression NEQ Expression
               | Expression LT Expression
