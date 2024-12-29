@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 int main(){
-    a = 5;
-    b = 6;
-    c = a - b; //Subtracao
+    int a = 5;
+    int b = 6;
+    int c = a - b; //Subtracao
     if (c != b && a >= b){
         printf("%d", c);
     }
