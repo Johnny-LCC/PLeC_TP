@@ -248,7 +248,7 @@ def p_Ret1(p):
 	"Ret : ID Index"
 
 def p_Ret2(p):
-	"Ret : ID Value"
+	"Ret : Value"
 
 def p_Ret3(p):
 	"Ret : "
@@ -259,11 +259,17 @@ def p_error(p):
 
 parser = yacc.yacc()
 parser.exito = True
+parser.reg = []
+parser.mv = ""
 
 fonte = ""
+
 c = open("teste.c", "r")
+
 for linha in c:
     fonte += linha
+
 c.close()
+
 if parser.exito:
     print("Parsing terminou com sucesso.")
