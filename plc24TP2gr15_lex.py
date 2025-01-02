@@ -9,7 +9,8 @@ import sys
 
 literals = ['(' , ')' , '{' , '}', ';' , ',' , '[' , ']', '&']
 
-tokens = ('ID','CHAR', 'INT', 'FLOAT', 'TIPO',
+tokens = ('ID','CHAR', 'INT', 'FLOAT',
+          'INTT', 'CHART', 'FLOATT', 'VOID',
           'STRING', 'ADD','SUB', 'MUL', 'DIV',
           'EQ', 'NEQ', 'LT', 'LE', 'GT', 'GE',
           'WRITE','READ', 'INCLUDE', 'BIBLIO',
@@ -80,8 +81,20 @@ def t_ATRIBUICAO(t):
     r'=(?!=)'
     return t
 
-def t_TIPO(t):
-    r'char|int|float|void'
+def t_INTT(t):
+    r'int'
+    return t
+
+def t_CHART(t):
+    r'char'
+    return t
+
+def t_FLOATT(t):
+    r'float'
+    return t
+
+def t_VOID(t):
+    r'void'
     return t
 
 def t_INCLUDE(t):

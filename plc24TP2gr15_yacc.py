@@ -29,7 +29,22 @@ def p_Funcs2(p):
 	"Funcs : Func Funcs"
 
 def p_Func(p):
-	"Func : TIPO ID '(' Params ')' '{' Lines Output '}'"
+	"Func : Tipos ID '(' Params ')' '{' Lines Output '}'"
+
+def p_Tipos1(p):
+	"Tipos : Tipo"
+
+def p_Tipos2(p):
+	"Tipos : VOID"
+
+def p_Tipo1(p):
+	"Tipo : INTT"
+
+def p_Tipo2(p):
+	"Tipo : CHART"
+
+def p_Tipo3(p):
+	"Tipo : FLAOTT"
 
 def p_Params1(p):
 	"Params : Param"
@@ -38,7 +53,7 @@ def p_Params2(p):
 	"Params : Param ',' Params"
 
 def p_Param1(p):
-	"Param : TIPO ID"
+	"Param : Tipo ID"
 
 def p_Param1(p):
 	"Param : "
@@ -80,7 +95,7 @@ def p_Line(p):
 	"Line : COMENT"
 
 def p_Declaration(p):
-	"Declaration : TIPO VarList"
+	"Declaration : Tipo VarList"
 
 def p_VarList1(p):
 	"VarList : ID Index"
@@ -107,10 +122,10 @@ def p_EqList2(p):
 	"EqList : ID Index '=' EqList"
 
 def p_DecAt1(p):
-	"DecAt : TIPO ID '=' ID Index"
+	"DecAt : Tipo ID '=' ID Index"
 
 def p_DecAt2(p):
-	"DecAt : TIPO ID '=' Value"
+	"DecAt : Tipo ID '=' Value"
 
 def p_Values1(p):
 	"Values : Value"
