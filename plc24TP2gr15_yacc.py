@@ -74,27 +74,48 @@ def p_Line1(p):
 
 def p_Line2(p):
 	"Line : Atribuition"
+	if parser.start:
+		parser.mv = parser.mv + "START\n"
+		parser.start = False
 
 def p_Line3(p):
 	"Line : DecAt"
 
 def p_Line4(p):
 	"Line : Math"
+	if parser.start:
+		parser.mv = parser.mv + "START\n"
+		parser.start = False
 
 def p_Line5(p):
 	"Line : Call"
+	if parser.start:
+		parser.mv = parser.mv + "START\n"
+		parser.start = False
 
 def p_Line6(p):
 	"Line : Select"
+	if parser.start:
+		parser.mv = parser.mv + "START\n"
+		parser.start = False
 
 def p_Line7(p):
 	"Line : Cicle"
+	if parser.start:
+		parser.mv = parser.mv + "START\n"
+		parser.start = False
 
 def p_Line8(p):
 	"Line : Read"
+	if parser.start:
+		parser.mv = parser.mv + "START\n"
+		parser.start = False
 
 def p_Line(p):
 	"Line : Write"
+	if parser.start:
+		parser.mv = parser.mv + "START\n"
+		parser.start = False
 
 def p_Line(p):
 	"Line : COMENT"
@@ -123,9 +144,13 @@ def p_Index2(p):
 
 def p_Atribuition1(p):
 	"Atribuition : EqList '=' ID Index"
+	#parser.mv = parser.mv + f"PUSHG {}"
+	#parser.mv = parser.mv + f"STOREG {}"
 
 def p_Atribuition2(p):
 	"Atribuition : EqList '=' Value"
+	#parser.mv = parser.mv + f"PUSHI {}" ...
+	#parser.mv = parser.mv + f"STOREG {}"
 
 def p_EqList1(p):
 	"EqList : ID Index"
@@ -135,9 +160,14 @@ def p_EqList2(p):
 
 def p_DecAt1(p):
 	"DecAt : Tipo ID '=' ID Index"
+	# pushi 0
+	# pushg index(ID0)
+	# storeg index(ID1)
 
 def p_DecAt2(p):
 	"DecAt : Tipo ID '=' Value"
+	#
+	# 
 
 def p_Values1(p):
 	"Values : Value"
@@ -292,7 +322,7 @@ def p_Write2(p):
 
 def p_Output(p):
 	"Output : RETURN Ret"
-	
+	parser.mv = parser.mv + "STOP"
 
 def p_Ret1(p):
 	"Ret : ID Index"
@@ -312,6 +342,7 @@ parser.exito = True
 parser.reg = []
 parser.aux = []
 parser.math = []
+parser.start = True
 parser.mv = ""
 
 fonte = ""
@@ -322,6 +353,11 @@ for linha in c:
     fonte += linha
 
 c.close()
+
+a = open("mv.txt", "w")
+a.write(parser.mv)
+#a.write("//Fim")
+a.close
 
 if parser.exito:
     print("Parsing terminou com sucesso.")
