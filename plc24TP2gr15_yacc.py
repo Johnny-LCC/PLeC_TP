@@ -39,9 +39,11 @@ def p_Tipos2(p):
 
 def p_Tipo1(p):
 	"Tipo : INTT"
+	parser.math = "I"
 
 def p_Tipo2(p):
 	"Tipo : CHART"
+	parser.math = "S"
 
 def p_Tipo3(p):
 	"Tipo : FLAOTT"
@@ -54,6 +56,8 @@ def p_Params2(p):
 
 def p_Param1(p):
 	"Param : Tipo ID"
+	if p[1] not in parser.reg:
+		parser.reg.append(p[1])
 
 def p_Param1(p):
 	"Param : "
@@ -99,9 +103,17 @@ def p_Declaration(p):
 
 def p_VarList1(p):
 	"VarList : ID Index"
+	if p[1] not in parser.reg:
+		parser.reg.append(p[1])
+	parser.mv = parser.mv + f"PUSH{parser.aux} 0"
+	parser.aux.pop()
 
 def p_VarList2(p):
 	"VarList : ID Index ',' VarList"
+	if p[1] not in parser.reg:
+		parser.reg.append(p[1])
+	parser.mv = parser.mv + f"PUSH{parser.aux} 0"
+	parser.aux.pop()
 
 def p_Index1(p):
 	"Index : '[' INT ']'"
@@ -150,30 +162,42 @@ def p_Array(p):
 
 def p_Math(p):
 	"Math : ID '=' Expression"
+	'''
+	while len(parser.math) > 0:
+		c = parser.math.pop()
+		parser.mv = parser.mv + c
+	'''
 
 def p_Expression1(p):
 	"Expression : Expression ADD Expression"
+	parser.math.append("ADD\n")
 
 def p_Expression2(p):
 	"Expression : Expression SUB Expression"
+	parser.math.append("SUB\n")
 
 def p_Expression3(p):
 	"Expression : Expression MUL Expression"
+	parser.math.append("MUL\n")
 
 def p_Expression4(p):
 	"Expression : Expression DIV Expression"
+	parser.math.append("DIV\n")
 
 def p_Expression5(p):
 	"Expression : '(' Expression ')'"
 
 def p_Expression6(p):
 	"Expression : ID"
+	parser.math.append(f"PUSHG {parser.reg.index(p[1])}\n")
 
 def p_Expression7(p):
 	"Expression : INT"
+	parser.math.append(f"PUSHI {p[1]}\n")
 
 def p_Expression8(p):
 	"Expression : FLOAT"
+	parser.math.append(f"PUSHF {p[1]}\n")
 
 def p_Call(p):
 	"Call : ID '(' Inputs ')'"
@@ -207,30 +231,40 @@ def p_Conditions1(p):
 
 def p_Conditions2(p):
 	"Conditions : Condition AND '(' Conditions ')'"
+	parser.math.append("AND\n")
            
 def p_Conditions3(p):
 	"Conditions : Condition OR '(' Conditions ')'"
+	parser.math.append("OR\n")
 
 def p_Condition1(p):
 	"Condition : Expression EQ Expression"
+	parser.math.append("EQUAL\n")
 
 def p_Condition2(p):
 	"Condition : Expression NEQ Expression" 
+	parser.math.append("NOT\n")
+	parser.math.append("EQUAL\n")
 
 def p_Condition3(p):
 	"Condition : Expression LT Expression"
+	parser.math.append("INF\n")
 
 def p_Condition4(p):
 	"Condition : Expression LE Expression" 
+	parser.math.append("INFEQ\n")
 
 def p_Condition5(p):
 	"Condition : Expression GT Expression" 
+	parser.math.append("SUP\n")
 
 def p_Condition6(p):
-	"Condition : Expression GE Expression" 
+	"Condition : Expression GE Expression"
+	parser.math.append("SUPEQ\n")
 
 def p_Condition7(p):
 	"Condition : NOT Condition"
+	parser.math.append("NOT\n")
 
 def p_Maths1(p):
 	"Maths : Math"
@@ -258,6 +292,7 @@ def p_Write2(p):
 
 def p_Output(p):
 	"Output : RETURN Ret"
+	
 
 def p_Ret1(p):
 	"Ret : ID Index"
@@ -275,6 +310,8 @@ def p_error(p):
 parser = yacc.yacc()
 parser.exito = True
 parser.reg = []
+parser.aux = []
+parser.math = []
 parser.mv = ""
 
 fonte = ""

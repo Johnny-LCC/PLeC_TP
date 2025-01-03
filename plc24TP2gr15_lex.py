@@ -18,7 +18,7 @@ tokens = ('ID','CHAR', 'INT', 'FLOAT',
           'COMENT', 'ATRIBUICAO', 'NOT', 'AND', 'OR')
 
 def t_COMENT(t):
-    r'//[^\n]*|(/\*(.*)\*/)'
+    r'//[^\n]*' #|(/\*(.*)\*/)'
     return t
 
 def t_BIBLIO(t):
