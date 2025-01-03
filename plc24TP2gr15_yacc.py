@@ -39,14 +39,15 @@ def p_Tipos2(p):
 
 def p_Tipo1(p):
 	"Tipo : INTT"
-	parser.math = "I"
+	parser.aux.append["PUSHI"]
 
 def p_Tipo2(p):
 	"Tipo : CHART"
-	parser.math = "S"
+	parser.aux.append["PUSHS"]
 
 def p_Tipo3(p):
 	"Tipo : FLAOTT"
+	parser.aux.append["PUSHF"]
 
 def p_Params1(p):
 	"Params : Param"
@@ -105,21 +106,20 @@ def p_VarList1(p):
 	"VarList : ID Index"
 	if p[1] not in parser.reg:
 		parser.reg.append(p[1])
-	parser.mv = parser.mv + f"PUSH{parser.aux} 0"
-	parser.aux.pop()
 
 def p_VarList2(p):
 	"VarList : ID Index ',' VarList"
 	if p[1] not in parser.reg:
 		parser.reg.append(p[1])
-	parser.mv = parser.mv + f"PUSH{parser.aux} 0"
-	parser.aux.pop()
 
 def p_Index1(p):
 	"Index : '[' INT ']'"
+	parser.mv = parser.mv + "PUSHN 0\n"
 
 def p_Index2(p):
-	"Index : "  
+	"Index : " 
+	parser.mv = parser.mv + f"{parser.aux[0]} 0\n"
+	parser.aux.pop()
 
 def p_Atribuition1(p):
 	"Atribuition : EqList '=' ID Index"
