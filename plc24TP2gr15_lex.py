@@ -9,8 +9,7 @@ import sys
 
 literals = ['(' , ')' , '{' , '}', ';' , ',' , '[' , ']', '&']
 
-tokens = ('ID','CHAR', 'INT', 'FLOAT',
-          'INTT', 'CHART', 'FLOATT', 'VOID',
+tokens = ('ID', 'INT', 'FLOAT', 'INTT', 'FLOATT',
           'STRING', 'ADD','SUB', 'MUL', 'DIV',
           'EQ', 'NEQ', 'LT', 'LE', 'GT', 'GE',
           'WRITE','READ', 'INCLUDE', 'BIBLIO',
@@ -18,7 +17,7 @@ tokens = ('ID','CHAR', 'INT', 'FLOAT',
           'COMENT', 'ATRIBUICAO', 'NOT', 'AND', 'OR')
 
 def t_COMENT(t):
-    r'//[^\n]*' #|(/\*(.*)\*/)'
+    r'//[^\n]*'
     return t
 
 def t_BIBLIO(t):
@@ -53,20 +52,20 @@ def t_NOT(t):
     r'\!(?!=)'
     return t
 
-def t_LT(t):
-    r'<'
-    return t
-
-def t_GT(t):
-    r'>'
-    return t
-
 def t_LE(t):
     r'<='
     return t
 
 def t_GE(t):
     r'>='
+    return t
+
+def t_LT(t):
+    r'<(?!=)'
+    return t
+
+def t_GT(t):
+    r'>(?!=)'
     return t
 
 def t_AND(t):
@@ -85,16 +84,8 @@ def t_INTT(t):
     r'int'
     return t
 
-def t_CHART(t):
-    r'char'
-    return t
-
 def t_FLOATT(t):
     r'float'
-    return t
-
-def t_VOID(t):
-    r'void'
     return t
 
 def t_INCLUDE(t):
@@ -129,20 +120,16 @@ def t_READ(t):
     r'scanf'
     return t
 
-def t_CHAR(t):
-    r'\"[A-z]\"'
-    return t
-
 def t_STRING(t):
     r'\".+\"'
     return t
 
 def t_INT(t):
-    r'[0-9]+(?!\.)'
+    r'(-)?[0-9]+(?!\.)'
     return t
 
 def t_FLOAT(t):
-    r'[0-9]+\.[0-9]+'
+    r'(-)?[0-9]+\.[0-9]+'
     return t
 
 def t_ID(t):

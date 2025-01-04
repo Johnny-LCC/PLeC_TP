@@ -1,14 +1,14 @@
 #include <stdio.h>
 
 int main(){
-    int a = 5; //PUSHI 5
-    int b = 6; //PUSHI 6
-    int c = a - b; // PUSHI 0, START, PUSHG 0, PUSHG 1, SUB, STOREG 2
-    if (c != b && a >= b){ // PUSHG 2, PUSHG 1, EQUAL, PUSHG 0, PUSHG 1, SUPEQ, AND, JZ Else
-        printf("c"); // PUSHS "C", WRITES
-    } // JUMP Fim
-    else{ //Else: NOP
-        printf("a b"); // PUSHS "A B", WRITES
-    } // Fim: NOP
-    return 0; // STOP
+    int a = 5; 
+    int b = 6; 
+    int c = a - b; 
+    if (c != b && a >= b){ 
+        printf("c"); 
+    } 
+    else{ 
+        printf("a b"); 
+    } 
+    return 0; 
 }

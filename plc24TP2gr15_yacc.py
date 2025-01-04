@@ -29,39 +29,15 @@ def p_Funcs2(p):
 	"Funcs : Func Funcs"
 
 def p_Func(p):
-	"Func : Tipos ID '(' Params ')' '{' Lines Output '}'"
-
-def p_Tipos1(p):
-	"Tipos : Tipo"
-
-def p_Tipos2(p):
-	"Tipos : VOID"
+	"Func : Tipos ID '(' ')' '{' Lines Output '}'"
 
 def p_Tipo1(p):
 	"Tipo : INTT"
 	parser.aux.append("PUSHI")
 
 def p_Tipo2(p):
-	"Tipo : CHART"
-	parser.aux.append("PUSHS")
-
-def p_Tipo3(p):
 	"Tipo : FLOATT"
 	parser.aux.append("PUSHF")
-
-def p_Params1(p):
-	"Params : Param"
-
-def p_Params2(p):
-	"Params : Param ',' Params"
-
-def p_Param1(p):
-	"Param : Tipo ID"
-	if p[1] not in parser.reg:
-		parser.reg.append(p[1])
-
-def p_Param2(p):
-	"Param : "
 
 def p_Lines1(p):
 	"Lines : Line"
@@ -88,116 +64,63 @@ def p_Line4(p):
 		parser.start = False
 
 def p_Line5(p):
-	"Line : Call"
-	if parser.start:
-		parser.mv = parser.mv + "START\n"
-		parser.start = False
-
-def p_Line6(p):
 	"Line : Select"
 	if parser.start:
 		parser.mv = parser.mv + "START\n"
 		parser.start = False
 
-def p_Line7(p):
+def p_Line6(p):
 	"Line : Cicle"
 	if parser.start:
 		parser.mv = parser.mv + "START\n"
 		parser.start = False
 
-def p_Line8(p):
+def p_Line7(p):
 	"Line : Read"
 	if parser.start:
 		parser.mv = parser.mv + "START\n"
 		parser.start = False
 
-def p_Line9(p):
+def p_Line8(p):
 	"Line : Write"
 	if parser.start:
 		parser.mv = parser.mv + "START\n"
 		parser.start = False
 
-def p_Line10(p):
+def p_Line9(p):
 	"Line : COMENT"
 
 def p_Declaration(p):
 	"Declaration : Tipo VarList ';'"
 
 def p_VarList1(p):
-	"VarList : ID Index"
+	"VarList : ID"
 	if p[1] not in parser.reg:
 		parser.reg.append(p[1])
 
 def p_VarList2(p):
-	"VarList : ID Index ',' VarList"
+	"VarList : ID ',' VarList"
 	if p[1] not in parser.reg:
 		parser.reg.append(p[1])
 
-def p_Index1(p):
-	"Index : '[' INT ']'"
-	parser.mv = parser.mv + "PUSHN 0\n"
-
-def p_Index2(p):
-	"Index : " 
-	parser.mv = parser.mv + f"{parser.aux[0]} 0\n"
-	parser.aux.pop()
-
-def p_Atribuition1(p):
-	"Atribuition : EqList ATRIBUICAO ID Index ';'"
+def p_Atribuition(p):
+	"Atribuition : EqList ATRIBUICAO Expression ';'"
 	#parser.mv = parser.mv + f"PUSHG {}"
 	#parser.mv = parser.mv + f"STOREG {}"
 
-def p_Atribuition2(p):
-	"Atribuition : EqList ATRIBUICAO Value ';'"
-	#parser.mv = parser.mv + f"PUSHI {}" ...
-	#parser.mv = parser.mv + f"STOREG {}"
-
 def p_EqList1(p):
-	"EqList : ID Index"
+	"EqList : ID"
 
 def p_EqList2(p):
-	"EqList : ID Index ATRIBUICAO EqList"
+	"EqList : ID ATRIBUICAO EqList"
 
 def p_DecAt1(p):
-	"DecAt : Tipo ID ATRIBUICAO ID Index ';'"
+	"DecAt : Tipo ID ATRIBUICAO Expression';'"
 	if p[2] not in parser.reg:
 		parser.reg.append(p[2])
 	parser.mv = parser.mv + parser.aux.pop() + " 0\n"
 	parser.mv = parser.mv + f"PUSHG {parser.reg.index(p[4])}\n"
 	parser.mv = parser.mv + f"STOREG {parser.reg.index(p[2])}\n"
-
-def p_DecAt2(p):
-	"DecAt : Tipo ID ATRIBUICAO Value ';'"
-	if p[2] not in parser.reg:
-		parser.reg.append(p[2])
-	parser.mv = parser.mv + parser.aux.pop() + f" {p[4]}\n"
-
-def p_DecAt3(p):
-	"DecAt : Tipo ID Index ATRIBUICAO Array ';'"
-	'''if p[2] not in parser.reg:
-		parser.reg.append(p[2])
-	parser.mv = parser.mv + parser.aux.pop() + f" {p[4]}\n"'''
-
-def p_Values1(p):
-	"Values : Value"
-
-def p_Values2(p):
-	"Values : Value ',' Values"
-
-def p_Value1(p):
-	"Value : INT"
-	# check
-
-def p_Value2(p):
-	"Value : FLOAT"
-	# check
-
-def p_Value3(p):
-	"Value : CHAR"
-	# check
-
-def p_Array(p):
-	"Array : '{' Values '}'"
 
 def p_Math(p):
 	"Math : ID ATRIBUICAO Expression ';'"
@@ -225,33 +148,27 @@ def p_Expression5(p):
 	"Expression : '(' Expression ')'"
 
 def p_Expression6(p):
-	"Expression : ID"
+	"Expression : ID" #Index
 	parser.stack.append(f"PUSHG {parser.reg.index(p[1])}\n")
 
 def p_Expression7(p):
-	"Expression : INT"
-	parser.stack.append(f"PUSHI {p[1]}\n")
+	"Expression : Value"
 
 def p_Expression8(p):
-	"Expression : FLOAT"
-	parser.stack.append(f"PUSHF {p[1]}\n")
+	"Expression : Call"
+
+def p_Value1(p):
+	"Value : INT"
+	# check
+
+def p_Value2(p):
+	"Value : FLOAT"
+	# check
 
 def p_Call(p):
-	"Call : ID '(' Inputs ')' ';'"
+	"Call : ID '(' ')' ';'"
 
-def p_Inputs1(p):
-	"Inputs : Input"
-
-def p_Inputs2(p):
-	"Inputs : Input ',' Inputs"
-
-def p_Input1(p):
-	"Input : ID Index"
-
-def p_Input2(p):
-	"Input : Value"
-
-def p_Select1(p):
+def p_Select(p):
 	"Select : IF '(' Conditions ')' '{' Lines '}' Else"
 	#parser.control = parser.control + 1
 	#parser.stack.append("EndIf: \n")
@@ -271,10 +188,12 @@ def p_Else2(p):
 		parser.mv = parser.mv + parser.stack.pop()
 	parser.stack.pop()
 	parser.mv = parser.mv + "Else: NOP\n"
+	#pass
 
 def p_EndIf(p):
 	"EndIf : "
 	parser.mv = parser.mv + "EndIf: \n"
+	#pass
 
 def p_Cicle1(p):
 	"Cicle : WHILE '(' Conditions ')' '{' Lines '}'"
@@ -288,11 +207,11 @@ def p_Conditions1(p):
 	"Conditions : Condition"
 
 def p_Conditions2(p):
-	"Conditions : Condition AND '(' Conditions ')'"
+	"Conditions : Condition AND Conditions"
 	parser.stack.append("AND\n")
            
 def p_Conditions3(p):
-	"Conditions : Condition OR '(' Conditions ')'"
+	"Conditions : Condition OR Conditions"
 	parser.stack.append("OR\n")
 
 def p_Condition1(p):
@@ -321,7 +240,7 @@ def p_Condition6(p):
 	parser.stack.append("SUPEQ\n")
 
 def p_Condition7(p):
-	"Condition : NOT Condition"
+	"Condition : NOT '(' Condition ')'"
 	parser.stack.append("NOT\n")
 
 def p_Maths1(p):
@@ -354,16 +273,17 @@ def p_Output(p):
 	parser.mv = parser.mv + f"STOP\n//Return: {p[2]}\n"
 
 def p_Ret1(p):
-	"Ret : ID Index"
+	"Ret : ID"
 
 def p_Ret2(p):
 	"Ret : Value"
 
 def p_Ret3(p):
 	"Ret : "
+	pass
 
 def p_error(p):
-    print("Erro Sintático! Reescreva a frase!")
+    print(f"Erro Sintático: {p.value} - Reescreva a frase")
     parser.exito = False
 
 parser = yacc.yacc()
@@ -376,13 +296,12 @@ parser.start = True
 parser.mv = ""
 
 fonte = ""
+
 c = open("teste.c", "r")
 for linha in c:
     fonte += linha
 c.close()
-
-if parser.exito:
-    parser.parse(fonte)
+parser.parse(fonte)
 
 with open("mv.txt", "w") as a:
     a.write(parser.mv)
