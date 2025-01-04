@@ -181,7 +181,7 @@ def p_DecAt3(p):
 def p_Values1(p):
 	"Values : Value"
 
-def p_Values1(p):
+def p_Values2(p):
 	"Values : Value ',' Values"
 
 def p_Value1(p):
