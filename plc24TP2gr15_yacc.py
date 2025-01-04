@@ -46,7 +46,7 @@ def p_Tipo2(p):
 	parser.aux.append["PUSHS"]
 
 def p_Tipo3(p):
-	"Tipo : FLAOTT"
+	"Tipo : FLOATT"
 	parser.aux.append["PUSHF"]
 
 def p_Params1(p):
@@ -60,7 +60,7 @@ def p_Param1(p):
 	if p[1] not in parser.reg:
 		parser.reg.append(p[1])
 
-def p_Param1(p):
+def p_Param2(p):
 	"Param : "
 
 def p_Lines1(p):
@@ -111,13 +111,13 @@ def p_Line8(p):
 		parser.mv = parser.mv + "START\n"
 		parser.start = False
 
-def p_Line(p):
+def p_Line9(p):
 	"Line : Write"
 	if parser.start:
 		parser.mv = parser.mv + "START\n"
 		parser.start = False
 
-def p_Line(p):
+def p_Line10(p):
 	"Line : COMENT"
 
 def p_Declaration(p):
@@ -172,6 +172,12 @@ def p_DecAt2(p):
 		parser.reg.append(p[2])
 	parser.mv = parser.mv + parser.aux.pop() + f" {p[4]}\n"
 
+def p_DecAt3(p):
+	"DecAt : Tipo ID Index '=' Array"
+	'''if p[2] not in parser.reg:
+		parser.reg.append(p[2])
+	parser.mv = parser.mv + parser.aux.pop() + f" {p[4]}\n"'''
+
 def p_Values1(p):
 	"Values : Value"
 
@@ -190,48 +196,45 @@ def p_Value3(p):
 	"Value : CHAR"
 	# check
 
-def p_Value4(p):
-	"Value : Array"
-
 def p_Array(p):
 	"Array : '{' Values '}'"
 
 def p_Math(p):
 	"Math : ID '=' Expression"
-	while len(parser.math) > 0:
-		c = parser.math.pop()
+	while len(parser.stack) > 0:
+		c = parser.stack.pop()
 		parser.mv = parser.mv + c
 
 def p_Expression1(p):
 	"Expression : Expression ADD Expression"
-	parser.math.append("ADD\n")
+	parser.stack.append("ADD\n")
 
 def p_Expression2(p):
 	"Expression : Expression SUB Expression"
-	parser.math.append("SUB\n")
+	parser.stack.append("SUB\n")
 
 def p_Expression3(p):
 	"Expression : Expression MUL Expression"
-	parser.math.append("MUL\n")
+	parser.stack.append("MUL\n")
 
 def p_Expression4(p):
 	"Expression : Expression DIV Expression"
-	parser.math.append("DIV\n")
+	parser.stack.append("DIV\n")
 
 def p_Expression5(p):
 	"Expression : '(' Expression ')'"
 
 def p_Expression6(p):
 	"Expression : ID"
-	parser.math.append(f"PUSHG {parser.reg.index(p[1])}\n")
+	parser.stack.append(f"PUSHG {parser.reg.index(p[1])}\n")
 
 def p_Expression7(p):
 	"Expression : INT"
-	parser.math.append(f"PUSHI {p[1]}\n")
+	parser.stack.append(f"PUSHI {p[1]}\n")
 
 def p_Expression8(p):
 	"Expression : FLOAT"
-	parser.math.append(f"PUSHF {p[1]}\n")
+	parser.stack.append(f"PUSHF {p[1]}\n")
 
 def p_Call(p):
 	"Call : ID '(' Inputs ')'"
@@ -250,15 +253,28 @@ def p_Input2(p):
 
 def p_Select1(p):
 	"Select : IF '(' Conditions ')' '{' Lines '}' Else"
-	###
+	#parser.control = parser.control + 1
+	#parser.stack.append("EndIf: \n")
+	parser.stack.append("JZ Else\n")
 
 def p_Else1(p):
-	"Else : ELSE '{' Lines '}'"
-	###
+	"Else : ELSE '{' Lines '}' EndIf"
+	aux = parser.stack.pop()
+	while aux:
+		parser.mv = parser.mv + parser.stack.pop()
+	parser.mv = parser.mv + "JUMP EndIf\nElse: \n"
 
-def p_Else1(p):
-	"Else : " 
-	###
+def p_Else2(p):
+	"Else : "
+	aux = parser.stack.pop()
+	while aux:
+		parser.mv = parser.mv + parser.stack.pop()
+	parser.stack.pop()
+	parser.mv = parser.mv + "Else: NOP\n"
+
+def p_EndIf(p):
+	"EndIf : "
+	parser.mv = parser.mv + "EndIf: \n"
 
 def p_Cicle1(p):
 	"Cicle : WHILE '(' Conditions ')' '{' Lines '}'"
@@ -273,40 +289,40 @@ def p_Conditions1(p):
 
 def p_Conditions2(p):
 	"Conditions : Condition AND '(' Conditions ')'"
-	parser.math.append("AND\n")
+	parser.stack.append("AND\n")
            
 def p_Conditions3(p):
 	"Conditions : Condition OR '(' Conditions ')'"
-	parser.math.append("OR\n")
+	parser.stack.append("OR\n")
 
 def p_Condition1(p):
 	"Condition : Expression EQ Expression"
-	parser.math.append("EQUAL\n")
+	parser.stack.append("EQUAL\n")
 
 def p_Condition2(p):
 	"Condition : Expression NEQ Expression" 
-	parser.math.append("NOT\n")
-	parser.math.append("EQUAL\n")
+	parser.stack.append("NOT\n")
+	parser.stack.append("EQUAL\n")
 
 def p_Condition3(p):
 	"Condition : Expression LT Expression"
-	parser.math.append("INF\n")
+	parser.stack.append("INF\n")
 
 def p_Condition4(p):
 	"Condition : Expression LE Expression" 
-	parser.math.append("INFEQ\n")
+	parser.stack.append("INFEQ\n")
 
 def p_Condition5(p):
 	"Condition : Expression GT Expression" 
-	parser.math.append("SUP\n")
+	parser.stack.append("SUP\n")
 
 def p_Condition6(p):
 	"Condition : Expression GE Expression"
-	parser.math.append("SUPEQ\n")
+	parser.stack.append("SUPEQ\n")
 
 def p_Condition7(p):
 	"Condition : NOT Condition"
-	parser.math.append("NOT\n")
+	parser.stack.append("NOT\n")
 
 def p_Maths1(p):
 	"Maths : Math"
@@ -328,13 +344,14 @@ def p_Address(p):
 
 def p_Write1(p):
 	"Write : WRITE '(' STRING ')'"
+	parser.mv = parser.mv + f"PUSHS {p[3]}\nWRITE\n"
 
 def p_Write2(p):
-	"Write : WRITE '(' STRING ',' Values ')'"
+	"Write : WRITE '(' STRING ',' VarList ')'"
 
 def p_Output(p):
 	"Output : RETURN Ret"
-	parser.mv = parser.mv + "STOP"
+	parser.mv = parser.mv + f"STOP\n//Return: {p[2]}\n"
 
 def p_Ret1(p):
 	"Ret : ID Index"
@@ -353,7 +370,8 @@ parser = yacc.yacc()
 parser.exito = True
 parser.reg = []
 parser.aux = []
-parser.math = []
+parser.stack = []
+parser.control = 0
 parser.start = True
 parser.mv = ""
 

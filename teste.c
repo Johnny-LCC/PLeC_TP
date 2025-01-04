@@ -5,10 +5,10 @@ int main(){
     int b = 6; //PUSHI 6
     int c = a - b; // PUSHI 0, START, PUSHG 0, PUSHG 1, SUB, STOREG 2
     if (c != b && a >= b){ // PUSHG 2, PUSHG 1, EQUAL, PUSHG 0, PUSHG 1, SUPEQ, AND, JZ Else
-        printf("%d", c); // PUSHS "C", WRITES
+        printf("c"); // PUSHS "C", WRITES
     } // JUMP Fim
     else{ //Else: NOP
-        printf("%d %d", a, b); // PUSHS "A B", WRITES
+        printf("a b"); // PUSHS "A B", WRITES
     } // Fim: NOP
     return 0; // STOP
 }
