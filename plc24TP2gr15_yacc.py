@@ -160,14 +160,17 @@ def p_EqList2(p):
 
 def p_DecAt1(p):
 	"DecAt : Tipo ID '=' ID Index"
-	# pushi 0
-	# pushg index(ID0)
-	# storeg index(ID1)
+	if p[2] not in parser.reg:
+		parser.reg.append(p[2])
+	parser.mv = parser.mv + parser.aux.pop() + " 0\n"
+	parser.mv = parser.mv + f"PUSHG {parser.reg.index(p[4])}\n"
+	parser.mv = parser.mv + f"STOREG {parser.reg.index(p[2])}\n"
 
 def p_DecAt2(p):
 	"DecAt : Tipo ID '=' Value"
-	#
-	# 
+	if p[2] not in parser.reg:
+		parser.reg.append(p[2])
+	parser.mv = parser.mv + parser.aux.pop() + f" {p[4]}\n"
 
 def p_Values1(p):
 	"Values : Value"
@@ -177,12 +180,15 @@ def p_Values1(p):
 
 def p_Value1(p):
 	"Value : INT"
+	# check
 
 def p_Value2(p):
 	"Value : FLOAT"
+	# check
 
 def p_Value3(p):
 	"Value : CHAR"
+	# check
 
 def p_Value4(p):
 	"Value : Array"
@@ -192,11 +198,9 @@ def p_Array(p):
 
 def p_Math(p):
 	"Math : ID '=' Expression"
-	'''
 	while len(parser.math) > 0:
 		c = parser.math.pop()
 		parser.mv = parser.mv + c
-	'''
 
 def p_Expression1(p):
 	"Expression : Expression ADD Expression"
@@ -245,16 +249,24 @@ def p_Input2(p):
 	"Input : Value"
 
 def p_Select1(p):
-	"Select : IF '(' Conditions ')' '{' Lines '}' "
+	"Select : IF '(' Conditions ')' '{' Lines '}' Else"
+	###
 
-def p_Select2(p):
-	"Select : IF '(' Conditions ')' '{' Lines '}' ELSE '{' Lines '}'"
+def p_Else1(p):
+	"Else : ELSE '{' Lines '}'"
+	###
+
+def p_Else1(p):
+	"Else : " 
+	###
 
 def p_Cicle1(p):
 	"Cicle : WHILE '(' Conditions ')' '{' Lines '}'"
+	###
 
 def p_Cicle2(p):
 	"Cicle : FOR '(' ID ATRIBUICAO INT ';' Conditions ';' Maths ')' '{' Lines '}'"
+	###
 
 def p_Conditions1(p):
 	"Conditions : Condition"
@@ -356,7 +368,7 @@ c.close()
 
 a = open("mv.txt", "w")
 a.write(parser.mv)
-#a.write("//Fim")
+a.write("//Concluído")
 a.close
 
 if parser.exito:

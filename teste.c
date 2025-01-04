@@ -30,7 +30,7 @@ PUSHG 1
 SUPEQ
 AND
 JZ Else
-PUSHS "C"
+PUSHS "C" //PUSHG 2 \n STRI
 WRITES
 JUMP Fim
 Else: NOP
@@ -39,3 +39,5 @@ WRITES
 Fim: NOP
 STOP
 */
+
+// ATOI -> READ
