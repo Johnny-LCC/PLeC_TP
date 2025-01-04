@@ -39,15 +39,15 @@ def p_Tipos2(p):
 
 def p_Tipo1(p):
 	"Tipo : INTT"
-	parser.aux.append["PUSHI"]
+	parser.aux.append("PUSHI")
 
 def p_Tipo2(p):
 	"Tipo : CHART"
-	parser.aux.append["PUSHS"]
+	parser.aux.append("PUSHS")
 
 def p_Tipo3(p):
 	"Tipo : FLOATT"
-	parser.aux.append["PUSHF"]
+	parser.aux.append("PUSHF")
 
 def p_Params1(p):
 	"Params : Param"
@@ -64,10 +64,10 @@ def p_Param2(p):
 	"Param : "
 
 def p_Lines1(p):
-	"Lines : Line ';'"
+	"Lines : Line"
 
 def p_Lines2(p):
-	"Lines : Line ';' Lines"
+	"Lines : Line Lines"
 
 def p_Line1(p):
 	"Line : Declaration"
@@ -121,7 +121,7 @@ def p_Line10(p):
 	"Line : COMENT"
 
 def p_Declaration(p):
-	"Declaration : Tipo VarList"
+	"Declaration : Tipo VarList ';'"
 
 def p_VarList1(p):
 	"VarList : ID Index"
@@ -143,12 +143,12 @@ def p_Index2(p):
 	parser.aux.pop()
 
 def p_Atribuition1(p):
-	"Atribuition : EqList '=' ID Index"
+	"Atribuition : EqList ATRIBUICAO ID Index ';'"
 	#parser.mv = parser.mv + f"PUSHG {}"
 	#parser.mv = parser.mv + f"STOREG {}"
 
 def p_Atribuition2(p):
-	"Atribuition : EqList '=' Value"
+	"Atribuition : EqList ATRIBUICAO Value ';'"
 	#parser.mv = parser.mv + f"PUSHI {}" ...
 	#parser.mv = parser.mv + f"STOREG {}"
 
@@ -156,10 +156,10 @@ def p_EqList1(p):
 	"EqList : ID Index"
 
 def p_EqList2(p):
-	"EqList : ID Index '=' EqList"
+	"EqList : ID Index ATRIBUICAO EqList"
 
 def p_DecAt1(p):
-	"DecAt : Tipo ID '=' ID Index"
+	"DecAt : Tipo ID ATRIBUICAO ID Index ';'"
 	if p[2] not in parser.reg:
 		parser.reg.append(p[2])
 	parser.mv = parser.mv + parser.aux.pop() + " 0\n"
@@ -167,13 +167,13 @@ def p_DecAt1(p):
 	parser.mv = parser.mv + f"STOREG {parser.reg.index(p[2])}\n"
 
 def p_DecAt2(p):
-	"DecAt : Tipo ID '=' Value"
+	"DecAt : Tipo ID ATRIBUICAO Value ';'"
 	if p[2] not in parser.reg:
 		parser.reg.append(p[2])
 	parser.mv = parser.mv + parser.aux.pop() + f" {p[4]}\n"
 
 def p_DecAt3(p):
-	"DecAt : Tipo ID Index '=' Array"
+	"DecAt : Tipo ID Index ATRIBUICAO Array ';'"
 	'''if p[2] not in parser.reg:
 		parser.reg.append(p[2])
 	parser.mv = parser.mv + parser.aux.pop() + f" {p[4]}\n"'''
@@ -200,7 +200,7 @@ def p_Array(p):
 	"Array : '{' Values '}'"
 
 def p_Math(p):
-	"Math : ID '=' Expression"
+	"Math : ID ATRIBUICAO Expression ';'"
 	while len(parser.stack) > 0:
 		c = parser.stack.pop()
 		parser.mv = parser.mv + c
@@ -237,7 +237,7 @@ def p_Expression8(p):
 	parser.stack.append(f"PUSHF {p[1]}\n")
 
 def p_Call(p):
-	"Call : ID '(' Inputs ')'"
+	"Call : ID '(' Inputs ')' ';'"
 
 def p_Inputs1(p):
 	"Inputs : Input"
@@ -331,7 +331,7 @@ def p_Maths2(p):
 	"Maths : Math ',' Maths"
 
 def p_Read(p):
-	"Read : READ '(' STRING ',' Addresses ')'"
+	"Read : READ '(' STRING ',' Addresses ')' ';'"
 
 def p_Addresses1(p):
 	"Addresses : Address"
@@ -343,14 +343,14 @@ def p_Address(p):
 	"Address : '&' ID"
 
 def p_Write1(p):
-	"Write : WRITE '(' STRING ')'"
+	"Write : WRITE '(' STRING ')' ';'"
 	parser.mv = parser.mv + f"PUSHS {p[3]}\nWRITE\n"
 
 def p_Write2(p):
-	"Write : WRITE '(' STRING ',' VarList ')'"
+	"Write : WRITE '(' STRING ',' VarList ')' ';'"
 
 def p_Output(p):
-	"Output : RETURN Ret"
+	"Output : RETURN Ret ';'"
 	parser.mv = parser.mv + f"STOP\n//Return: {p[2]}\n"
 
 def p_Ret1(p):
@@ -376,18 +376,18 @@ parser.start = True
 parser.mv = ""
 
 fonte = ""
-
 c = open("teste.c", "r")
-
 for linha in c:
     fonte += linha
-
 c.close()
 
-a = open("mv.txt", "w")
-a.write(parser.mv)
-a.write("//Concluído")
-a.close
+if parser.exito:
+    parser.parse(fonte)
+
+with open("mv.txt", "w") as a:
+    a.write(parser.mv)
 
 if parser.exito:
-    print("Parsing terminou com sucesso.")
+	print("Parsing terminou com sucesso.")
+if parser.mv:
+    print("Código máquina gerado com sucesso.")
