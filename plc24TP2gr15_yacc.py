@@ -28,7 +28,7 @@ def p_Funcs2(p):
 	"Funcs : Func Funcs"
 
 def p_Func(p):
-	"Func : Tipo ID '(' ')' '{' Declarations Lines Output '}'"
+	"Func : Tipo ID '(' ')' '{' Declarations Lines Output '}'" # Tipo -> INTT
 
 def p_Tipo1(p):
 	"Tipo : INTT"
@@ -55,6 +55,7 @@ def p_Declaration2(p):
 		parser.reg.append(p[2])
 	else:
 		parser.mv = parser.mv + "ERR \"Variável já declarada\"\n"
+	#parser.stack.pop()
 
 def p_VarList1(p):
 	"VarList : ID "
@@ -107,7 +108,7 @@ def p_Value1(p):
 	"Value : INT"
 	t = parser.stack.pop()
 	if t == "PUSHI":
-		parser.mv = parser.mv + f"{t} {p[1]}"
+		parser.mv = parser.mv + f"{t} {p[1]}\n"
 	else:
 		parser.mv = parser.mv + "ERR \"Erro com os tipos (1)\"\n"
 
@@ -115,7 +116,7 @@ def p_Value2(p):
 	"Value : FLOAT"
 	t = parser.stack.pop()
 	if t == "PUSHF":
-		parser.mv = parser.mv + f"{t} {p[1]}"
+		parser.mv = parser.mv + f"{t} {p[1]}\n"
 	else:
 		parser.mv = parser.mv + "ERR \"Erro com os tipos (2)\"\n"
 
@@ -211,11 +212,11 @@ def p_Conditions3(p):
 
 def p_Condition1(p):
 	"Condition : Expression EQ Expression"
-	parser.mv = parser.mv + "EQ\n"
+	parser.mv = parser.mv + "EQUAL\n"
 
 def p_Condition2(p):
 	"Condition : Expression NEQ Expression"
-	parser.mv = parser.mv + "EQ\nNOT\n"
+	parser.mv = parser.mv + "EQUAL\nNOT\n"
 
 def p_Condition3(p):
 	"Condition : Expression LT Expression"
@@ -279,8 +280,6 @@ def p_Ret1(p):
 
 def p_Ret2(p):
 	"Ret : Value"
-	v = parser.stack.pop()
-	parser.mv = parser.mv + f"PUSHI {v}\n"
 
 def p_Ret3(p):
 	"Ret : "
@@ -297,12 +296,25 @@ parser.stack = []
 parser.s = parser.c = 0
 parser.mv = ""
 
-fonte = ""
+fonte = """#include <stdio.h>
 
-c = open("teste.c", "r")
+int main(){
+    int a = 5; 
+    int b = 6; 
+    int c = a - b; 
+    if (c == b && a >= b){ 
+		printf("c");
+    } 
+    else{ 
+        printf("a & b");
+    } 
+    return 0; 
+}"""
+
+'''c = open("teste.c", "r")
 for linha in c:
     fonte += linha
-c.close()
+c.close()'''
 parser.parse(fonte)
 
 with open("mv.txt", "w") as a:
