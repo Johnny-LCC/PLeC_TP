@@ -28,7 +28,7 @@ def p_Funcs2(p):
 	"Funcs : Func Funcs"
 
 def p_Func(p):
-	"Func : Tipo ID '(' ')' '{' Declarations Lines Output '}'" # Tipo -> INTT
+	"Func : Tipo ID '(' ')' '{' Declarations Lines Output '}'"
 
 def p_Tipo1(p):
 	"Tipo : INTT"
@@ -55,7 +55,6 @@ def p_Declaration2(p):
 		parser.reg.append(p[2])
 	else:
 		parser.mv = parser.mv + "ERR \"Variável já declarada\"\n"
-	#parser.stack.pop()
 
 def p_VarList1(p):
 	"VarList : ID "
