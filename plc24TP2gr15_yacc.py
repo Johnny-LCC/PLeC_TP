@@ -51,6 +51,7 @@ def p_Declaration1(p):
 
 def p_Declaration2(p):
 	"Declaration : Tipo ID ATRIBUICAO Expression ';'"
+	parser.stack.pop()
 	if p[2] not in parser.reg:
 		parser.reg.append(p[2])
 	else:
@@ -95,6 +96,7 @@ def p_Expression5(p):
 
 def p_Expression6(p):
 	"Expression : ID"
+	#check#
 	parser.mv = parser.mv + f"PUSHG {parser.reg.index(p[1])}\n"
 
 def p_Expression7(p):
@@ -105,7 +107,7 @@ def p_Expression8(p):
 
 def p_Value1(p):
 	"Value : INT"
-	t = parser.stack.pop()
+	t = parser.stack[-1]
 	if t == "PUSHI":
 		parser.mv = parser.mv + f"{t} {p[1]}\n"
 	else:
@@ -113,7 +115,7 @@ def p_Value1(p):
 
 def p_Value2(p):
 	"Value : FLOAT"
-	t = parser.stack.pop()
+	t = parser.stack[-1]
 	if t == "PUSHF":
 		parser.mv = parser.mv + f"{t} {p[1]}\n"
 	else:
@@ -121,45 +123,43 @@ def p_Value2(p):
 
 def p_Call(p):
 	"Call : ID '(' ')'"
-	parser.mv = parser.mv + f"JUMP {p[1]}" ###
+	parser.mv = parser.mv + f"JUMP {p[1]}\n" ###
 
 def p_Lines1(p):
 	"Lines : Line"
-	#
+	if parser.control:
+		parser.aux.append("AUX")
 
 def p_Lines2(p):
 	"Lines : Line Lines"
-	#
 
 def p_Line1(p):
 	"Line : Atribuition"
-	#
 
 def p_Line2(p):
 	"Line : Math"
-	#
 
 def p_Line3(p):
 	"Line : Select"
-	parser.mv = parser.mv + f"EndIf{parser.s}: \n"
-	parser.s = parser.s - 1
-
+	parser.mv = parser.mv + f"End{parser.n}: \n"
+	parser.control = False
+	parser.n = parser.n - 1
+	
 def p_Line4(p):
 	"Line : Cicle"
-	parser.mv = parser.mv + f"EndIf{parser.c}: \n"
-	parser.c = parser.c - 1
+	parser.mv = parser.mv + f"End{parser.n}: \n"
+	parser.control = False
+	parser.n = parser.n - 1
 
 def p_Line5(p):
 	"Line : Read"
-	#
 
 def p_Line6(p):
 	"Line : Write"
-	#
 
 def p_Line7(p):
 	"Line : COMENT"
-	parser.mv = parser.mv + f"{p[1]}" ###
+	parser.mv = parser.mv + f"{p[1]}\n" ###
 	
 def p_Atribuition(p):
 	"Atribuition : EqList ATRIBUICAO Expression ';'"
@@ -179,15 +179,24 @@ def p_Math(p):
 
 def p_Select(p):
 	"Select : IF '(' Conditions ')' '{' Lines '}' Else"
-	#
+	s = f"JUMP End{parser.n}\nElse:\n"
+	l = parser.aux.pop(0)
+	while l != "AUX":
+		s = s + l
+		l = parser.aux.pop(0)
+	parser.mv = parser.mv + s
 
 def p_Else1(p):
 	"Else : ELSE '{' Lines '}'"
-	#
+	s = "JUMP Else\n"
+	l = parser.aux.pop(0)
+	while l!="AUX":
+		s = s + l
+		l = parser.aux.pop(0)
+	parser.mv = parser.mv + s
 
 def p_Else2(p):
 	"Else : "
-	#
 	pass
 
 def p_Cicle1(p):
@@ -200,6 +209,8 @@ def p_Cicle2(p):
 
 def p_Conditions1(p):
 	"Conditions : Condition"
+	parser.control = True
+	parser.n = parser.n + 1
 
 def p_Conditions2(p):
 	"Conditions : Condition AND Conditions"
@@ -263,14 +274,23 @@ def p_Address(p):
 
 def p_Write1(p):
 	"Write : WRITE '(' STRING ')' ';'"
-	parser.mv = parser.mv + f"PUSHS {p[3]}\nWRITE\n"
+	s = f"PUSHS {p[3]}\nWRITE\n"
+	if parser.control:
+		parser.aux.append(s)
+	else:
+		parser.mv = parser.mv + s
 
 def p_Write2(p):
 	"Write : WRITE '(' STRING ',' VarList ')' ';'"
-	###
+	s = f"PUSHS {p[3]}\nWRITE\n" ###
+	if parser.control:
+		parser.aux.append(s)
+	else:
+		parser.mv = parser.mv + s
 
 def p_Output(p):
 	"Output : RETURN Ret ';'"
+	parser.stack.pop()
 	parser.mv = parser.mv + f"STOP"
 
 def p_Ret1(p):
@@ -292,8 +312,11 @@ parser = yacc.yacc()
 parser.exito = True
 parser.reg = []
 parser.stack = []
-parser.s = parser.c = 0
+#parser.lines = [] #??
+parser.control = False 
+parser.n = 0
 parser.mv = ""
+parser.aux = []
 
 fonte = """#include <stdio.h>
 
@@ -320,6 +343,5 @@ with open("mv.txt", "w") as a:
     a.write(parser.mv)
 
 if parser.exito:
-	print("Parsing terminou com sucesso.")
-'''if parser.mv:
-    print("Código máquina gerado com sucesso.")'''
+	print("Parsing terminou com sucesso.\nCompilação Concluída.")
+	print(parser.stack)
