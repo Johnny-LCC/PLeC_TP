@@ -179,17 +179,11 @@ def p_Math(p):
 
 def p_Select(p):
 	"Select : IF '(' Conditions ')' '{' Lines '}' Else"
-	s = f"JUMP End{parser.n}\nElse:\n"
+	s = f"JZ End{parser.n}\nElse:\n"
 	l = parser.aux.pop(0)
 	while l != "AUX":
 		s = s + l
 		l = parser.aux.pop(0)
-	parser.mv = parser.mv + s
-
-def p_Else1(p):
-	"Else : ELSE '{' Lines '}'"
-	s = "JUMP Else\n"
-	l = parser.aux.pop(0)
 	while l!="AUX":
 		s = s + l
 		l = parser.aux.pop(0)
