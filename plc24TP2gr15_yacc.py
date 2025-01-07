@@ -268,7 +268,7 @@ def p_Address(p):
 
 def p_Write1(p):
 	"Write : WRITE '(' STRING ')' ';'"
-	s = f"PUSHS {p[3]}\nWRITE\n"
+	s = f"PUSHS {p[3]}\nWRITES\n"
 	if parser.control:
 		parser.aux.append(s)
 	else:
