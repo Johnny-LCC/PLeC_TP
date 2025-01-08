@@ -137,50 +137,44 @@ def p_Line1(p):
 	"Line : Atribuition"
 
 def p_Line2(p):
-	"Line : Math"
-
-def p_Line3(p):
 	"Line : Select"
 	parser.mv = parser.mv + f"End{parser.n}: \n"
 	parser.control = False
 	parser.n = parser.n - 1
 	
-def p_Line4(p):
+def p_Line3(p):
 	"Line : Cicle"
 	parser.mv = parser.mv + f"End{parser.n}: \n"
 	parser.control = False
 	parser.n = parser.n - 1
 
-def p_Line5(p):
+def p_Line4(p):
 	"Line : Read"
 
-def p_Line6(p):
+def p_Line5(p):
 	"Line : Write"
 
-def p_Line7(p):
+def p_Line6(p):
 	"Line : COMENT"
-	parser.mv = parser.mv + f"{p[1]}\n" ###
+	parser.mv = parser.mv + f"{p[1]}\n"
 	
 def p_Atribuition(p):
-	"Atribuition : EqList ATRIBUICAO Expression ';'"
-
-def p_EqList1(p):
-	"EqList : ID "
-
-def p_EqList2(p):
-	"EqList : ID ATRIBUICAO EqList"
-
-def p_Math(p):
-	"Math : ID ATRIBUICAO Expression ';'"
+	"Atribuition : ID ATRIBUICAO Expression ';'"
 	parser.mv = parser.mv + f"STOREG {parser.reg.index(p[1])}\n" ###
 
 def p_Select(p):
 	"Select : IF '(' Conditions ')' '{' Lines '}' Else"
-	s = f"JZ End{parser.n}\nElse:\n"
+	s = f"JUMP End{parser.n}\nElse:\n"
 	l = parser.aux.pop(0)
 	while l != "AUX":
 		s = s + l
 		l = parser.aux.pop(0)
+	parser.mv = parser.mv + s
+
+def p_Else1(p):
+	"Else : ELSE '{' Lines '}'"
+	s = "JZ Else\n"
+	l = parser.aux.pop(0)
 	while l!="AUX":
 		s = s + l
 		l = parser.aux.pop(0)
@@ -192,11 +186,11 @@ def p_Else2(p):
 
 def p_Cicle1(p):
 	"Cicle : WHILE '(' Conditions ')' '{' Lines '}'"
-	###
+	s = f"JUMP Flag\nEnd{parser.n}:\n" ###
 
-def p_Cicle2(p):
-	"Cicle : FOR '(' ID ATRIBUICAO INT ';' Conditions ';' Maths ')' '{' Lines '}'"
-	###
+'''def p_Cicle2(p):
+	"Cicle : FOR '(' ID ATRIBUICAO INT ';' Conditions ';' Math ')' '{' Lines '}'"
+	###'''
 
 def p_Conditions1(p):
 	"Conditions : Condition"
@@ -239,11 +233,11 @@ def p_Condition7(p):
 	"Condition : NOT '(' Condition ')'"
 	parser.mv = parser.mv + "NOT\n"
 
-def p_Maths1(p):
-	"Maths : Math"
+def p_Math1(p):
+	"Maths : Atribuition"
 
-def p_Maths2(p):
-	"Maths : Math ',' Maths"
+def p_Math2(p):
+	"Maths : Atribuition ',' Math"
 
 def p_Read(p):
 	"Read : READ '(' STRING ',' Addresses ')' ';'"
@@ -294,18 +288,22 @@ def p_Ret3(p):
 	pass
 
 def p_error(p):
-    print(f"Erro Sintático: {p.value} - Reescreva a frase")
+    if p:
+        print(f"ERRO SINTÁTICO :'{p.value}'\nReescreva a frase")
+    else:
+        print("ERRO SINTÁTICO: token inesperado")
     parser.exito = False
 
 parser = yacc.yacc()
 parser.exito = True
 parser.reg = []
 parser.stack = []
-#parser.lines = [] #??
-parser.control = False 
-parser.n = 0
 parser.mv = ""
 parser.aux = []
+parser.control = False 
+parser.n = 0
+parser.conds = ""
+parser.c
 
 fonte = ""
 c = open("teste1.c", "r")
