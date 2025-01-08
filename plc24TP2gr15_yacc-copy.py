@@ -150,10 +150,10 @@ def p_Line6(p):
 	print("Line6 - COMENT")
 	
 def p_Atribuition(p):
-	"Atribuition : EqList ATRIBUICAO Expression ';'"
+	"Atribuition : ID ATRIBUICAO Expression ';'"
 	print("Atribuition")
 
-def p_EqList1(p):
+'''def p_EqList1(p):
 	"EqList : ID "
 	print("EqList1: ", p[1])
 
@@ -161,7 +161,7 @@ def p_EqList2(p):
 	"EqList : ID ATRIBUICAO EqList"
 	print("EqList2: ", p[1])
 
-'''def p_Math(p):
+def p_Math(p):
 	"Math : ID ATRIBUICAO Expression ';'"
 	print("Math: ", p[1])'''
 
