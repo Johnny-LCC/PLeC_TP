@@ -123,31 +123,31 @@ def p_Lines2(p):
 
 def p_Line1(p):
 	"Line : Atribuition"
-	print("Line2 - Atribuition")
+	print("Line1 - Atribuition")
+
+'''def p_Line2(p):
+	"Line : Math"
+	print("Line4 - Math")'''
 
 def p_Line2(p):
-	"Line : Math"
-	print("Line4 - Math")
+	"Line : Select"
+	print("Line2 - Select")
 
 def p_Line3(p):
-	"Line : Select"
-	print("Line5 - Select")
+	"Line : Cicle"
+	print("Line3 - Cicle")
 
 def p_Line4(p):
-	"Line : Cicle"
-	print("Line6 - Cicle")
+	"Line : Read"
+	print("Line4 - Read")
 
 def p_Line5(p):
-	"Line : Read"
-	print("Line7 - Read")
+	"Line : Write"
+	print("Line5 - Write")
 
 def p_Line6(p):
-	"Line : Write"
-	print("Line8 - Write")
-
-def p_Line7(p):
 	"Line : COMENT"
-	print("Line9 - COMENT")
+	print("Line6 - COMENT")
 	
 def p_Atribuition(p):
 	"Atribuition : EqList ATRIBUICAO Expression ';'"
@@ -161,9 +161,9 @@ def p_EqList2(p):
 	"EqList : ID ATRIBUICAO EqList"
 	print("EqList2: ", p[1])
 
-def p_Math(p):
+'''def p_Math(p):
 	"Math : ID ATRIBUICAO Expression ';'"
-	print("Math: ", p[1])
+	print("Math: ", p[1])'''
 
 def p_Select(p):
 	"Select : IF '(' Conditions ')' '{' Lines '}' Else"
@@ -227,11 +227,11 @@ def p_Condition7(p):
 	print("Condition7 - NOT")	
 
 def p_Maths1(p):
-	"Maths : Math"
+	"Maths : Atribuition"
 	print("Maths1")
 
 def p_Maths2(p):
-	"Maths : Math ',' Maths"
+	"Maths : Atribuition ',' Maths"
 	print("Maths2")
 
 def p_Read(p):
@@ -286,20 +286,11 @@ def p_error(p):
 parser = yacc.yacc()
 parser.exito = True
 
-fonte = """#include <stdio.h>
-
-int main(){
-    int a = 5; 
-    int b = 6; 
-    int c = a - b; 
-    if (c == b && a >= b){ 
-		printf("c");
-    } 
-    else{ 
-        printf("a & b");
-    } 
-    return 0; 
-}"""
+fonte = ""
+c = open("teste1.c", "r")
+for linha in c:
+    fonte += linha
+c.close()
 
 parser.parse(fonte)
 

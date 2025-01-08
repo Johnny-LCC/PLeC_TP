@@ -163,15 +163,12 @@ def p_Line7(p):
 	
 def p_Atribuition(p):
 	"Atribuition : EqList ATRIBUICAO Expression ';'"
-	#
 
 def p_EqList1(p):
 	"EqList : ID "
-	#
 
 def p_EqList2(p):
 	"EqList : ID ATRIBUICAO EqList"
-	#
 
 def p_Math(p):
 	"Math : ID ATRIBUICAO Expression ';'"
@@ -244,11 +241,9 @@ def p_Condition7(p):
 
 def p_Maths1(p):
 	"Maths : Math"
-	#
 
 def p_Maths2(p):
 	"Maths : Math ',' Maths"
-	#
 
 def p_Read(p):
 	"Read : READ '(' STRING ',' Addresses ')' ';'"
@@ -312,25 +307,11 @@ parser.n = 0
 parser.mv = ""
 parser.aux = []
 
-fonte = """#include <stdio.h>
-
-int main(){
-    int a = 5; 
-    int b = 6; 
-    int c = a - b; 
-    if (c == b && a >= b){ 
-		printf("c");
-    } 
-    else{ 
-        printf("a & b");
-    } 
-    return 0; 
-}"""
-
-'''c = open("teste.c", "r")
+fonte = ""
+c = open("teste1.c", "r")
 for linha in c:
     fonte += linha
-c.close()'''
+c.close()
 parser.parse(fonte)
 
 with open("mv.txt", "w") as a:
