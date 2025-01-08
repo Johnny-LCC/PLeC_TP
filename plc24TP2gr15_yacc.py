@@ -188,9 +188,9 @@ def p_Cicle1(p):
 	"Cicle : WHILE '(' Conditions ')' '{' Lines '}'"
 	s = f"JUMP Flag\nEnd{parser.n}:\n" ###
 
-'''def p_Cicle2(p):
+def p_Cicle2(p):
 	"Cicle : FOR '(' ID ATRIBUICAO INT ';' Conditions ';' Math ')' '{' Lines '}'"
-	###'''
+	###
 
 def p_Conditions1(p):
 	"Conditions : Condition"
@@ -234,10 +234,10 @@ def p_Condition7(p):
 	parser.mv = parser.mv + "NOT\n"
 
 def p_Math1(p):
-	"Maths : Atribuition"
+	"Math : Atribuition"
 
 def p_Math2(p):
-	"Maths : Atribuition ',' Math"
+	"Math : Atribuition ',' Math"
 
 def p_Read(p):
 	"Read : READ '(' STRING ',' Addresses ')' ';'"
@@ -303,10 +303,10 @@ parser.aux = []
 parser.control = False 
 parser.n = 0
 parser.conds = ""
-parser.c
+parser.c = 0
 
 fonte = ""
-c = open("teste1.c", "r")
+c = open("teste.c", "r")
 for linha in c:
     fonte += linha
 c.close()
