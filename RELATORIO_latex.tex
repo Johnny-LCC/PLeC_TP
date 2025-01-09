@@ -14,7 +14,7 @@
 \usepackage{titling}
 
 
-\pretitle{\begin{center}\Huge\bfseries\color{green}} % Título muito grande, em negrito, vermelho
+\pretitle{\begin{center}\Huge\bfseries\color{blue}} % Título muito grande, em negrito, vermelho
 \posttitle{\par\vskip 1em\end{center}} % Espaçamento após o título
 \preauthor{\begin{center}\large\itshape\color{black}} % Autor em itálico e azul
 \postauthor{\par\end{center}} % Fim da personalização do autor
@@ -340,165 +340,108 @@ Para a resolução do problema construímos o analisador léxico seguindos os se
 
     Com o analisador léxico pronto temos agora uma base sólida para construir um BNF que represente a linguagem C juntamente com o analisador sintático.
 \chapter{An\'{a}lisador Sint\'{a}tico}
-No desenvolvimento do BNF, nosso objetivo foi criar uma representação simplificada e acessível da linguagem C, que fosse clara e fácil de compreender. Com isso em mente, apresentamos o BNF passo a passo.
+\section{BNF}
+No desenvolvimento do BNF, nosso objetivo foi criar uma representação simplificada e acessível da linguagem C, que fosse clara e fácil de compreender. Com isso em mente, apresentamos o BNF passo a passo com as respetivas descrições.
 \begin{lstlisting}
 Programa ::= Imports Funcs
 \end{lstlisting}
-O programa é composto por duas partes principais:
-
-\textbf{Imports} $\rightarrow$ Representa os cabeçalhos de biblioteca importados.
-
-\textbf{Funcs} $\rightarrow$ Contém as funções definidas no programa.
+Representa o programa principal, que consiste em declarações de bibliotecas (Imports) seguidas de funções (Funcs).
 \begin{lstlisting}
 Imports ::= Import
           | Import Imports 
 \end{lstlisting}
-Representa a lista de importações podendo haver uma única importação (Import) ou várias (Import Imports).
+Define que o programa pode ter uma ou mais declarações de bibliotecas.
 \begin{lstlisting}
 Import ::= INCLUDE BIBLIO  
 \end{lstlisting}
-
-\textbf{INCLUDE} $\rightarrow$ Palavra-chave para inclusão de bibliotecas.
-
-\textbf{BIBLIO} $\rightarrow$ Nome da biblioteca a ser incluída
+Define a sintaxe para incluir uma biblioteca
 \begin{lstlisting}
 Funcs ::= Func
          Func Funcs
 \end{lstlisting}
-Representa uma função ou uma sequência de funções
+Representa uma ou mais definições de funções no programa.
 \begin{lstlisting}
-Func ::= Tipos ID '(' Params ')' '{' Lines Output '}'
+Func ::= Tipo ID '(' ')' '{' Declarations Lines Output '}'
 \end{lstlisting}
-Cada função tem:
-
-\textbf{Tipos} $\rightarrow$ O tipo de retorno da função (ex.: int, void).
-
-\textbf{ID} $\rightarrow$ O nome da função.
-
-\textbf{Params} $\rightarrow$ Os parâmetros da função, listados entre parênteses.
-
-\textbf{Lines} $\rightarrow$ O corpo da função, composto por várias linhas de código.
-
-\textbf{Output} $\rightarrow$ A declaração de retorno da função (return).
+Define a estrutura de uma função:tipo de retorno (Tipo),nome da função (ID),parâmetros (aqui sem parâmetros definidos),bloco da função com declarações (Declarations), linhas de execução (Lines) e saída (Output).
 \begin{lstlisting}
-Tipos ::= Tipo
-        | VOID
-Tipo ::= INT
-       | CHAR
-       | FLOAT
+Tipo ::= INTT
+       | FLOATT
 \end{lstlisting}
-
-\textbf{Tipos} $\rightarrow$ Representa os tipos básicos de variáveis podendo ser int.char ou float.         
+Define o tipo de dados da variável ou do retorno de uma função:int ou float.
 \begin{lstlisting}
-Params ::= Param
-         |Param ',' Params
-         | 
-Param ::= Tipo ID
+Declarations ::= Declaration
+               | Declaration Declarations
 \end{lstlisting}
-
-\textbf{Params} $\rightarrow$ Lista de parâmetros, podendo ser única (Param) ou múltipla (Param ',' Params).
-
-\textbf{Param} $\rightarrow$ Um parâmetro tem um tipo e um identificador (Tipo ID).
+Declara variáveis dentro de um bloco de código
 \begin{lstlisting}
-Lines ::= Line ';'
-        | Line ';' Lines
+Declaration ::= Tipo VarList ';'
+              | Tipo ID ATRIBUICAO Expression ';'
 \end{lstlisting}
-
-\textbf{Lines} $\rightarrow$ Representa o corpo de uma função, que é uma sequência de linhas de código.
+Declara uma lista de variáveis do mesmo tipo ou inicia uma variável com um valor.
 \begin{lstlisting}
-Line ::= Declaration
-       | Atribuition
-       | DecAt
-       | Math
-       | Call
+VarList ::= ID
+          | ID ',' VarList 
+\end{lstlisting}
+Representa uma lista de variáveis separadas por vírgula.
+\begin{lstlisting}
+Expression ::= Expression ADD Expression
+             | Expression SUB Expression
+             | Expression MUL Expression
+             | Expression DIV Expression
+             | '(' <Expression> ')'
+             | ID
+             | Value
+             | Call
+\end{lstlisting}
+Representa expressões matemáticas e operações que podem ser realizadas(+,-,*,/)
+\begin{lstlisting}
+Value ::= INT
+        | FLOAT
+\end{lstlisting}
+Representa valores literais numéricos.
+\begin{lstlisting}
+Call ::= ID '(' ')'
+\end{lstlisting}
+Representa a chamada de uma função por seu identificador (ID).
+\begin{lstlisting}
+Lines ::= Line
+        | Line Lines
+\end{lstlisting}
+Representa uma ou mais linhas de execução no corpo de uma função.
+\begin{lstlisting}
+Line ::= Atribuition
        | Select
        | Cicle
        | Read
        | Write
        | COMENT
 \end{lstlisting}
-Uma linha pode ser uma declaração, atribuição, chamada de função, estrutura de controle, entre outros.
+Representa uma única linha de execução(atribuição, seleção (if-else), ciclo (while/for), leitura (Read), escrita (Write), ou comentário (COMENT)).
 \begin{lstlisting}
-Declaration ::= Tipo VarList
-VarList ::= ID Index
-          | ID Index ',' VarList
+Atribuition ::= ID ATRIBUICAO Expression ';'
 \end{lstlisting}
-Para declarar variaveis é necessário o tipo e uma lista de variáveis no qual pode só conter uma única variável (ID Index) ou várias separadas por vírgula.
+Realiza uma atribuição de valor a uma variável.
 \begin{lstlisting}
-Index ::= '[' INT ']'
-        | 
+Select ::= IF '(' Conditions ')' '{' Lines '}' Else
 \end{lstlisting}
-Representa a indexação de arrays. Pode ser vazia, se a variável não for um array.
+Define uma estrutura condicional (if-else).
 \begin{lstlisting}
-Atribuition ::= EqList '=' ID Index
-              | EqList '=' Value
+Else ::= ELSE '{' Lines '}'
+       |
 \end{lstlisting}
-Atribui um valor ou outra variável a um identificador.
-\begin{lstlisting}
-EqList ::= ID Index
-         | ID Index '=' EqList
-\end{lstlisting}
-Representa uma lista de atribuições em cadeia.
-\begin{lstlisting}
-DecAt ::= Tipo ID '=' ID Index
-        | Tipo ID '=' Value
-\end{lstlisting}
-Essa produção permite declarar uma variável de um determinado tipo e, ao mesmo tempo, atribuir um valor inicial a ela.
-\begin{lstlisting}
-Values ::= Value
-         | Value ',' Values
-Value ::= INT
-        | FLOAT
-        | CHAR
-        | Array
-Array ::= '{' Values '}'
-\end{lstlisting}
-Essa produção permite a definição de múltiplos valores, separados por vírgulas do tipo int,float,char e até mesmo um coleção de valores representada por um array.
-\begin{lstlisting}
-Math ::= ID '=' Expression
-\end{lstlisting}
-Realiza operações matemáticas e armazena o resultado em uma variável.
-\begin{lstlisting}
-Expression ::= Expression ADD Expression
-             | Expression SUB Expression
-             | Expression MUL Expression
-             | Expression DIV Expression
-             | '(' Expression ')'
-             | ID
-             | INT
-             | FLOAT
-\end{lstlisting}
-Representa expressões matemáticas, incluindo operações básicas, valores numéricos e variáveis.
-\begin{lstlisting}
-Call ::= ID '(' Inputs ')'
-\end{lstlisting}
-Representa a chamada de uma função na linguagem.
-\begin{lstlisting}
-Inputs ::= Input
-        | Input ',' Inputs
-\end{lstlisting}
-Define os parâmetros ou valores passados para uma função durante sua chamada.
-\begin{lstlisting}
-Input ::= ID Index
-        | Value
-\end{lstlisting}
-Define os possíveis tipos de argumentos que podem ser passados para uma função.
-\begin{lstlisting}
-Select ::= IF '(' Conditions ')' '{' Lines '}'
-         | IF '(' Conditions ')' '{' Lines '}' ELSE '{' Lines '}'
-\end{lstlisting}
-Estrutura condicional if-else, que executa blocos de código baseados em condições.
+Bloco opcional que executa quando a condição do if é falsa.
 \begin{lstlisting}
 Cicle ::= WHILE '(' Conditions ')' '{' Lines '}'
-        | FOR '(' ID ATRIBUICAO INT ';' Conditions ';' Maths ')' '{' Lines '}'
+        | FOR '(' ID ATRIBUICAO INT ';' Conditions ';' Math ')' '{' Lines '}'
 \end{lstlisting}
-Representa os ciclos while e for, usados para repetir blocos de código.
+Define ciclos (loops) no programa:while ou for.
 \begin{lstlisting}
 Conditions ::= Condition
-             | Condition AND '(' Conditions ')'
-             | Condition OR '(' Conditions ')'
+             | Condition AND Conditions
+             | Condition OR Conditions
 \end{lstlisting}
-Representa condições lógicas compostas por operadores como AND, OR, e NOT.
+Representa condições lógicas.
 \begin{lstlisting}
 Condition ::= Expression EQ Expression
             | Expression NEQ Expression
@@ -506,33 +449,43 @@ Condition ::= Expression EQ Expression
             | Expression LE Expression
             | Expression GT Expression
             | Expression GE Expression
-            | NOT Condition
+            | NOT '(' <Condition> ')'
 \end{lstlisting}
-Condições baseadas em operadores de comparação.
+Avalia uma expressão lógica
 \begin{lstlisting}
-Maths ::= Math
-        | Math ',' Maths
+Math ::= Atribuition
+       | Atribuition ',' Math
 \end{lstlisting}
-Lista de operações matemáticas
+Representa operações matemáticas em ciclos ou expressões.
 \begin{lstlisting}
-Read ::= READ '(' STRING ',' Addresses ')'
+Read ::= READ '(' STRING ',' Addresses ')' ';'
+\end{lstlisting}
+Lê valores de entrada e os armazena em variáveis.
+\begin{lstlisting}
 Addresses ::= Address
             | Address ',' Addresses
+\end{lstlisting}
+Representa uma lista de endereços de memória onde os valores serão armazenados.
+\begin{lstlisting}
 Address ::= '&' ID
 \end{lstlisting}
-Este trecho reprensenta a função read e os juntamente com os endereços que esta função requere
+Representa o endereço de uma variável.
 \begin{lstlisting}
-Write ::= WRITE '(' STRING ')'
-        | WRITE '(' STRING ',' Values ')'
+Write ::= WRITE '(' STRING ')' ';'
+        | WRITE '(' STRING ',' VarList ')' ';'
 \end{lstlisting}
-Representa a função write.
+Imprime valores na saída padrão.
 \begin{lstlisting}
-Output ::= RETURN Ret
-Ret ::= ID Index
+Output ::= RETURN Ret ';'
+\end{lstlisting}
+Define a instrução de retorno de uma função.
+\begin{lstlisting}
+Ret ::= ID
       | Value
       | 
 \end{lstlisting}
-Corresponde ao return em C.
+Define o valor retornado pela função, que pode ser uma variável ou um valor literal.
+
 
  
 Com isto tudo temos o seguinte BNF.
@@ -544,88 +497,65 @@ Imports ::= Import
 Import ::= INCLUDE BIBLIO
 Funcs ::= Func
         | Func Funcs
-Func ::= Tipos ID '(' Params ')' '{' Lines Output '}'
-Tipos ::= Tipo
-        | VOID
+Func ::= Tipo ID '(' ')' '{' Declarations Lines Output '}'
 Tipo ::= INTT
-       | CHART
-       | FLAOTT
-Params ::= Param
-         | Param ',' Params
-         | 
-Param ::= Tipo ID
-        | 
-Lines ::= Line ';'
-        | Line ';' Lines
-Line ::= Declaration
-       | Atribuition
-       | DecAt
-       | Math
-       | Call
-       | Select
-       | Cicle
-       | Read
-       | Write
-       | COMENT
-Declaration ::= Tipo VarList
-VarList ::= ID Index
-          | ID Index ',' VarList
-Index ::= '[' INT ']'
-        | 
-Atribuition ::= EqList '=' ID Index
-              | EqList '=' Value
-EqList ::= ID Index
-         | ID Index '=' EqList
-DecAt ::= Tipo ID '=' ID Index
-        | Tipo ID '=' Value
-Values ::= Value
-         | Value ',' Values
-Value ::= INT
-        | FLOAT
-        | CHAR
-        | Array
-Array ::= '{' Values '}'
-Math ::= ID '=' Expression
+        | FLOATT
+Declarations ::= Declaration
+               | Declaration Declarations
+Declaration ::= Tipo VarList ';'
+              | Tipo ID ATRIBUICAO Expression ';'
+VarList ::= ID
+          | ID ',' VarList
 Expression ::= Expression ADD Expression
              | Expression SUB Expression
              | Expression MUL Expression
              | Expression DIV Expression
-             | '(' Expression ')'
+             | '(' <Expression> ')'
              | ID
-             | INT
-             | FLOAT
-Call ::= ID '(' Inputs ')'
-Inputs ::= Input
-         | Input ',' Inputs
-Input ::= ID Index
-        | Value
-Select ::= IF '(' Conditions ')' '{' Lines '}'
-         | IF '(' Conditions ')' '{' Lines '}' ELSE '{' Lines '}'
+             | Value
+             | Call
+Value ::= INT
+        | FLOAT
+Call ::= ID '(' ')'
+Lines ::= Line
+        | Line Lines
+Line ::= Atribuition
+        | Select
+        | Cicle
+        | Read
+        | Write
+        | COMENT
+Atribuition ::= ID ATRIBUICAO <Expression> ';'
+Select ::= IF '(' <Conditions> ')' '{' <Lines> '}' Else
+Else ::= ELSE '{' Lines '}'
+       | 
 Cicle ::= WHILE '(' Conditions ')' '{' Lines '}'
-        | FOR '(' ID ATRIBUICAO INT ';' Conditions ';' Maths ')' '{' Lines '}'
+        | FOR '(' ID ATRIBUICAO INT ';' Conditions ';' Math ')' '{' Lines '}'
 Conditions ::= Condition
-             | Condition AND '(' Conditions ')'
-             | Condition OR '(' Conditions ')'
+             | Condition AND Conditions
+             | Condition OR Conditions
 Condition ::= Expression EQ Expression
-            | Expression NEQ Expression
-            | Expression LT Expression
-            | Expression LE Expression
-            | Expression GT Expression
-            | Expression GE Expression
-            | NOT Condition
-Maths ::= Math
-        | Math ',' Maths
-Read ::= READ '(' STRING ',' Addresses ')'
+             | Expression NEQ Expression
+             | Expression LT Expression
+             | Expression LE Expression
+             | Expression GT Expression
+             | Expression GE Expression
+             | NOT '(' <Condition> ')'
+Math ::= Atribuition
+       | Atribuition ',' Math
+Read ::= READ '(' STRING ',' <Addresses> ')' ';'
 Addresses ::= Address
             | Address ',' Addresses
 Address ::= '&' ID
-Write ::= WRITE '(' STRING ')'
-        | WRITE '(' STRING ',' Values ')'
-Output ::= RETURN Ret
-Ret ::= ID Index
+Write ::= WRITE '(' STRING ')' ';'
+        | WRITE '(' STRING ',' VarList ')' ';'
+Output ::= RETURN Ret ';'
+Ret ::= ID
       | Value
       | 
 \end{lstlisting}
+\section{Máquina Virtual}
+De acordo com o enunciado do trabalho, foi nos pedido que fosse gerado um código assembly por isso foi necessario acrescentar certas especificações yacc.
 
 
 
@@ -636,7 +566,7 @@ Resultados dos testes realizados com exemplos.
 \chapter{Conclus\~{a}o}
 A concepção deste trabalho prático permitiu-nos combinar ideias e técnicas relacionadas com a tecnologia da linguagem na programação gramatical. Implementações de linguagem simples, com suporte a variáveis atômicas, instruções algorítmicas básicas, controle de fluxo e outros recursos adicionais, destacaram desafios e melhores práticas no desenvolvimento de gramáticas de tradução e no uso de ferramentas como Lex e Yacc do PLY.
 
-O pseudocódigo de design e máquina virtual (VM) forneceu uma explicação prática da tradução, destacando a possibilidade de construir e transformar a gramática em uma solução eficaz. A utilização de técnicas e conceitos de processamento de texto não só nos permitiu compreender melhor os conceitos teóricos, mas também aplicá-los de forma eficaz na resolução de problemas práticos. É definida uma linguagem que atenda aos requisitos, incluindo manipulação e métodos básicos de controle. Os documentos LaTeX têm contribuído para a transparência na apresentação dos projetos técnicos, garantindo que os processos e resultados sejam bem documentados e reproduzíveis.
+O pseudocódigo de design e máquina virtual (VM) forneceu uma explicação prática da tradução, destacando a possibilidade de construir e transformar a gramática em uma solução eficaz. A utilização de técnicas e conceitos de processamento de texto não só nos permitiu compreender melhor os conceitos teóricos, mas também aplicá-los de forma eficaz na resolução de problemas práticos. É definida uma linguagem(com base em C) que atenda aos requisitos, incluindo manipulação e métodos básicos de controle. Os documentos LaTeX têm contribuído para a transparência na apresentação dos projetos técnicos, garantindo que os processos e resultados sejam bem documentados e reproduzíveis.
 
-Por fim, o trabalho produzido revelou-se uma experiência de aprendizagem, afirmando as competências técnicas e práticas necessárias para projetos mais complexos. o futuro. A coleção desenvolvida, com relatos e exemplos de prática, atingiu seus objetivos e apresentou avanços significativos na compreensão e aplicação da linguagem e das habilidades.
+Por fim, o trabalho produzido revelou-se uma experiência de aprendizagem, afirmando as competências técnicas e práticas necessárias para projetos mais complexos. A trabalho desenvolvido, com exemplos práticos, atingiu seus objetivos e apresentou avanços significativos na compreensão e aplicação dos conceitos lecionados nesta unidade curricular.
 \end{document}
