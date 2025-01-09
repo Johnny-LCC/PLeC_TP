@@ -5,7 +5,6 @@ Alexis Correia - A102495
 '''
 
 import ply.yacc as yacc
-import sys
 
 from plc24TP2gr15_lex import tokens
 
@@ -208,31 +207,38 @@ def p_Conditions3(p):
 def p_Condition1(p):
 	"Condition : Expression EQ Expression"
 	parser.mv = parser.mv + "EQUAL\n"
+	#parser.c = parser.c + 1
 
 def p_Condition2(p):
 	"Condition : Expression NEQ Expression"
 	parser.mv = parser.mv + "EQUAL\nNOT\n"
+	#parser.c = parser.c + 1
 
 def p_Condition3(p):
 	"Condition : Expression LT Expression"
 	parser.mv = parser.mv + "INF\n"
+	#parser.c = parser.c + 1
 
 def p_Condition4(p):
 	"Condition : Expression LE Expression"
 	parser.mv = parser.mv + "INFEQ\n"
+	#parser.c = parser.c + 1
 
 def p_Condition5(p):
 	"Condition : Expression GT Expression"
 	parser.mv = parser.mv + "SUP\n"
+	#parser.c = parser.c + 1
 
 def p_Condition6(p):
 	"Condition : Expression GE Expression"
 	parser.mv = parser.mv + "SUPEQ\n"
+	#parser.c = parser.c + 1
 
 def p_Condition7(p):
 	"Condition : NOT '(' Condition ')'"
 	parser.mv = parser.mv + "NOT\n"
-
+	#parser.c = parser.c + 1
+	
 def p_Math1(p):
 	"Math : Atribuition"
 
@@ -265,7 +271,7 @@ def p_Write1(p):
 
 def p_Write2(p):
 	"Write : WRITE '(' STRING ',' VarList ')' ';'"
-	s = f"PUSHS {p[3]}\nWRITE\n" ###
+	s = f"PUSHS {p[3]}\nWRITES\n" ###
 	if parser.control:
 		parser.aux.append(s)
 	else:
@@ -296,17 +302,16 @@ def p_error(p):
 
 parser = yacc.yacc()
 parser.exito = True
-parser.reg = []
-parser.stack = []
-parser.mv = ""
-parser.aux = []
 parser.control = False 
-parser.n = 0
-parser.conds = ""
+parser.n = parser.m = parser.M = 0
+parser.reg = []
+parser.stack =[]
+parser.aux = []
+parser.mv = ""
 parser.c = 0
 
 fonte = ""
-c = open("teste.c", "r")
+c = open("teste1.c", "r")
 for linha in c:
     fonte += linha
 c.close()

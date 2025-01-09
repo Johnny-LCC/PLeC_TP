@@ -5,7 +5,6 @@ Alexis Correia - A102495
 '''
 
 import ply.lex as lex
-import sys
 
 literals = ['(' , ')' , '{' , '}', ';' , ',' , '[' , ']', '&']
 
@@ -143,10 +142,13 @@ def t_error(t):
     t.lexer.skip(1)
 
 lexer = lex.lex()
-'''c = open("teste1.c", "r")
+
+'''
+c = open("teste1.c", "r")
 for linha in c:
     lexer.input(linha) 
     for tok in lexer:
         print(tok)
 c.close()
-print("Fim (Lexer)")'''
+print("Fim (Lexer)")
+'''
