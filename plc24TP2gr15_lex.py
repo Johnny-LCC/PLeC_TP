@@ -8,12 +8,11 @@ import ply.lex as lex
 
 literals = ['(' , ')' , '{' , '}', ';' , ',' , '[' , ']', '&']
 
-tokens = ('ID', 'INT', 'FLOAT', 'INTT', 'FLOATT',
-          'STRING', 'ADD','SUB', 'MUL', 'DIV',
-          'EQ', 'NEQ', 'LT', 'LE', 'GT', 'GE',
-          'WRITE','READ', 'INCLUDE', 'BIBLIO',
+tokens = ('ID', 'INT', 'INTT','STRING', 'ADD', 'SUB',
+          'MUL', 'DIV','EQ', 'NEQ', 'LT', 'LE', 'GT', 
+          'GE', 'WRITE','READ', 'INCLUDE', 'BIBLIO',
           'IF', 'ELSE', 'FOR', 'WHILE','RETURN',
-          'COMENT', 'ATRIBUICAO', 'NOT', 'AND', 'OR')
+          'COMENT', 'ATRIBUICAO', 'NOT', 'AND', 'OR') 
 
 def t_COMENT(t):
     r'//[^\n]*'
@@ -83,10 +82,6 @@ def t_INTT(t):
     r'int'
     return t
 
-def t_FLOATT(t):
-    r'float'
-    return t
-
 def t_INCLUDE(t):
     r'\#[ ]?include'
     return t
@@ -125,10 +120,6 @@ def t_STRING(t):
 
 def t_INT(t):
     r'(-)?[0-9]+(?!\.)'
-    return t
-
-def t_FLOAT(t):
-    r'(-)?[0-9]+\.[0-9]+'
     return t
 
 def t_ID(t):

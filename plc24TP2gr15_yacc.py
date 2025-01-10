@@ -10,6 +10,15 @@ from plc24TP2gr15_lex import tokens
 
 def p_Programa(p):
 	"Programa : Imports Funcs"
+	l = parser.aux.pop()
+	l = l.split("RETURN")
+	l = l[0]+"STOP"+l[1]
+	while l:
+		parser.mv = parser.mv + l
+		if parser.aux:
+			l = parser.aux.pop()
+		else:
+			l = False
 	
 def p_Imports1(p):
 	"Imports : Import"
@@ -28,14 +37,15 @@ def p_Funcs2(p):
 
 def p_Func(p):
 	"Func : Tipo ID '(' ')' '{' Declarations Lines Output '}'"
+	o = parser.aux.pop()
+	l = parser.aux.pop()
+	d = parser.aux.pop()
+	f = f"{p[2]}:\n"+d+l+o
+	parser.aux.append(f)
 
-def p_Tipo1(p):
+def p_Tipo(p):
 	"Tipo : INTT"
 	parser.type.append("PUSHI")
-
-def p_Tipo2(p):
-	"Tipo : FLOATT"
-	parser.type.append("PUSHF")
 
 def p_Declarations1(p):
 	"Declarations : Declaration"
@@ -43,14 +53,19 @@ def p_Declarations1(p):
 	for c in parser.aux:
 		s = s + c
 	s = s + "START\n"
-	parser.aux.clear()
-	parser.aux.append(s) ##
+	parser.aux = []
+	parser.aux.append(s)
 
 def p_Declarations2(p):
 	"Declarations : Declaration Declarations"
 
 def p_Declaration1(p):
 	"Declaration : Tipo VarList ';'"
+	c = parser.aux.pop()
+	if "PUSHG" in c:
+		parser.aux.append("ERR \"Variável declarada duas vezes\"\n")
+	else:
+		parser.aux.append(c) 
 	parser.type.pop()
 
 def p_Declaration2(p):
@@ -59,7 +74,7 @@ def p_Declaration2(p):
 	if p[2] not in parser.reg:
 		parser.reg.append(p[2])
 	else:
-		parser.aux.append("ERR \"Variável já declarada\"\n")
+		parser.aux.append(f"ERR \"Variável {p[1]} já declarada\"\n")
 
 def p_VarList1(p):
 	"VarList : ID "
@@ -68,7 +83,7 @@ def p_VarList1(p):
 		t = parser.type[-1]
 		parser.aux.append(f"{t} 0 //{p[1]}\n")
 	else:
-		parser.aux.append("ERR \"Variável já declarada\"\n")
+		parser.aux.append(f"ERR \"Variável {p[1]} já declarada\"\n")
 
 def p_VarList2(p):
 	"VarList : ID ',' VarList"
@@ -77,7 +92,7 @@ def p_VarList2(p):
 		t = parser.type[-1]
 		parser.aux.append(f"{t} 0 //{p[1]}\n")
 	else:
-		parser.aux.append("ERR \"Variável já declarada\"\n")
+		parser.aux.append(f"ERR \"Variável {p[1]} já declarada\"\n")
 
 def p_Expression1(p):
 	"Expression : Expression ADD Expression"
@@ -131,20 +146,11 @@ def p_Value1(p):
 		s = f"{t} {p[1]}\n"
 		parser.aux.append(s)
 	else:
-		parser.aux.append("ERR \"Erro com os tipos (1)\"\n")
-
-def p_Value2(p):
-	"Value : FLOAT"
-	t = parser.type[-1]
-	if t == "PUSHF":
-		s = f"{t} {p[1]}\n"
-		parser.aux.append(s)
-	else:
-		parser.aux.append("ERR \"Erro com os tipos (2)\"\n")
+		parser.aux.append("ERR \"Valor não é inteiro\"\n")
 
 def p_Call(p):
 	"Call : ID '(' ')'"
-	s = f"JUMP {p[1]}\n"
+	s = f"PUSHA {p[1]}\nCALL\n"
 	parser.aux.append(s)
 
 def p_Lines1(p):
@@ -166,12 +172,12 @@ def p_Line1(p):
 
 def p_Line2(p):
 	"Line : Select"
-	parser.control = False ###
+	parser.control = parser.control - 1 #False ###
 	#parser.n = parser.n - 1
 
 def p_Line3(p):
 	"Line : Cicle"
-	parser.control = False ###
+	parser.control = parser.control - 1 #False ###
 	#parser.n = parser.n - 1
 
 def p_Line4(p):
@@ -206,7 +212,7 @@ def p_Else1(p):
 
 def p_Else2(p):
 	"Else : "
-	pass ###
+	pass
 
 def p_Cicle1(p):
 	"Cicle : WHILE '(' Conditions ')' '{' Lines '}'"
@@ -217,11 +223,10 @@ def p_Cicle1(p):
 
 def p_Cicle2(p):
 	"Cicle : FOR '(' ID ATRIBUICAO INT ';' Conditions ';' Math ')' '{' Lines '}'"
-	###
 
 def p_Conditions1(p):
 	"Conditions : Condition"
-	parser.control = True
+	parser.control = parser.control + 1 #True
 	#parser.n = parser.n + 1
 	parser.aux.append("COND")
 
@@ -298,20 +303,15 @@ def p_Math2(p):
 	"Math : Atribuition ',' Math"
 
 def p_Read(p):
-	"Read : READ '(' STRING ',' Addresses ')' ';'"
-	###
-
-def p_Addresses1(p):
-	"Addresses : Address"
-	###
-
-def p_Addresses2(p):
-	"Addresses : Address ',' Addresses"
-	###
+	"Read : READ '(' STRING ',' Address ')' ';'"
+	a = parser.aux.pop()
+	s = "READ\nATOI" + a
+	parser.aux.append(s)
 
 def p_Address(p):
 	"Address : '&' ID"
-	###
+	s = f"STOREG {parser.reg.index(p[2])}\n"
+	parser.aux.append(s)
 
 def p_Write1(p):
 	"Write : WRITE '(' STRING ')' ';'"
@@ -319,23 +319,37 @@ def p_Write1(p):
 	parser.aux.append(s)
 
 def p_Write2(p):
-	"Write : WRITE '(' STRING ',' VarList ')' ';'"
-	s = f"PUSHS {p[3]}\nWRITES\n" ###
+	"Write : WRITE '(' STRING ',' Addresses ')' ';'"
+	a = p[3].split("%d")
+	t = a.pop()
+	s = ""
+	while t:
+		s = s + parser.aux.pop() + t
+		t = a.pop()
+	s = s + f"PUSHS {p[3]}\nCONCAT\nWRITES\n"
+	parser.aux.append(s)
+
+def p_Addresses1(p):
+	"Addresses : ID"
+	s = f"PUSHG {parser.reg.index(p[1])}\nSTRI\n"
+	parser.aux.append(s)
+
+def p_Addresses2(p):
+	"Addresses : ID ',' Addresses"
+	e = "PUSHS \" \"\nCONCAT\n"
+	s = f"PUSHG {parser.reg.index(p[1])}\nSTRI\n\CONCAT\n"
 	parser.aux.append(s)
 
 def p_Output(p):
 	"Output : RETURN Ret ';'"
 	parser.type.pop()
-	parser.aux.append("STOP")
+	r = parser.aux.pop()
+	parser.aux.append(r + "RETURN\n")
 
 def p_Ret1(p):
-	"Ret : ID"
-	parser.aux.append(f"PUSHG {parser.reg.index(p[1])}\n")
+	"Ret : Expression"
 
 def p_Ret2(p):
-	"Ret : Value"
-
-def p_Ret3(p):
 	"Ret : "
 	pass
 
@@ -348,7 +362,7 @@ def p_error(p):
 
 parser = yacc.yacc()
 parser.exito = True
-parser.control = False 
+parser.control = 0 #False 
 #parser.n = parser.m = parser.M = 0
 parser.reg = []
 parser.type =[]
@@ -356,7 +370,7 @@ parser.aux = []
 parser.mv = ""
 
 fonte = ""
-c = open("teste1.c", "r")
+c = open("teste.c", "r")
 for linha in c:
     fonte += linha
 c.close()
