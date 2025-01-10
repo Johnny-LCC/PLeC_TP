@@ -31,72 +31,92 @@ def p_Func(p):
 
 def p_Tipo1(p):
 	"Tipo : INTT"
-	parser.stack.append("PUSHI")
+	parser.type.append("PUSHI")
 
 def p_Tipo2(p):
 	"Tipo : FLOATT"
-	parser.stack.append("PUSHF")
+	parser.type.append("PUSHF")
 
 def p_Declarations1(p):
 	"Declarations : Declaration"
-	parser.mv = parser.mv + "START\n"
+	s = ""
+	for c in parser.aux:
+		s = s + c
+	s = s + "START\n"
+	parser.aux.clear()
+	parser.aux.append(s) ##
 
 def p_Declarations2(p):
 	"Declarations : Declaration Declarations"
 
 def p_Declaration1(p):
 	"Declaration : Tipo VarList ';'"
-	parser.stack.pop()
+	parser.type.pop()
 
 def p_Declaration2(p):
 	"Declaration : Tipo ID ATRIBUICAO Expression ';'"
-	parser.stack.pop()
+	parser.type.pop()
 	if p[2] not in parser.reg:
 		parser.reg.append(p[2])
 	else:
-		parser.mv = parser.mv + "ERR \"Variável já declarada\"\n"
+		parser.aux.append("ERR \"Variável já declarada\"\n")
 
 def p_VarList1(p):
 	"VarList : ID "
 	if p[1] not in parser.reg:
 		parser.reg.append(p[1])
-		t = parser.stack[-1]
-		parser.mv = parser.mv + f"{t} 0 //{p[1]}\n"
+		t = parser.type[-1]
+		parser.aux.append(f"{t} 0 //{p[1]}\n")
 	else:
-		parser.mv = parser.mv + "ERR \"Variável já declarada\"\n"
+		parser.aux.append("ERR \"Variável já declarada\"\n")
 
 def p_VarList2(p):
 	"VarList : ID ',' VarList"
 	if p[1] not in parser.reg:
 		parser.reg.append(p[1])
-		t = parser.stack[-1]
-		parser.mv = parser.mv + f"{t} 0 //{p[1]}\n"
+		t = parser.type[-1]
+		parser.aux.append(f"{t} 0 //{p[1]}\n")
 	else:
-		parser.mv = parser.mv + "ERR \"Variável já declarada\"\n"
+		parser.aux.append("ERR \"Variável já declarada\"\n")
 
 def p_Expression1(p):
 	"Expression : Expression ADD Expression"
-	parser.mv = parser.mv + "ADD\n"
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "ADD\n"
+	parser.aux.append(s)
 
 def p_Expression2(p):
 	"Expression : Expression SUB Expression"
-	parser.mv = parser.mv + "SUB\n"
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "SUB\n"
+	parser.aux.append(s)
 
 def p_Expression3(p):
 	"Expression : Expression MUL Expression"
-	parser.mv = parser.mv + "MUL\n"
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "MUL\n"
+	parser.aux.append(s)
 
 def p_Expression4(p):
 	"Expression : Expression DIV Expression"
-	parser.mv = parser.mv + "DIV\n"
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "DIV\n"
+	parser.aux.append(s)
 
 def p_Expression5(p):
 	"Expression : '(' Expression ')'"
 
 def p_Expression6(p):
 	"Expression : ID"
-	#check#
-	parser.mv = parser.mv + f"PUSHG {parser.reg.index(p[1])}\n"
+	if p[1] in parser.reg: ###
+		s = f"PUSHG {parser.reg.index(p[1])}\n"
+		parser.aux.append(s)
+	else:
+		parser.aux.append("ERR \"Var não declarada\"\n")
 
 def p_Expression7(p):
 	"Expression : Value"
@@ -106,27 +126,36 @@ def p_Expression8(p):
 
 def p_Value1(p):
 	"Value : INT"
-	t = parser.stack[-1]
+	t = parser.type[-1]
 	if t == "PUSHI":
-		parser.mv = parser.mv + f"{t} {p[1]}\n"
+		s = f"{t} {p[1]}\n"
+		parser.aux.append(s)
 	else:
-		parser.mv = parser.mv + "ERR \"Erro com os tipos (1)\"\n"
+		parser.aux.append("ERR \"Erro com os tipos (1)\"\n")
 
 def p_Value2(p):
 	"Value : FLOAT"
-	t = parser.stack[-1]
+	t = parser.type[-1]
 	if t == "PUSHF":
-		parser.mv = parser.mv + f"{t} {p[1]}\n"
+		s = f"{t} {p[1]}\n"
+		parser.aux.append(s)
 	else:
-		parser.mv = parser.mv + "ERR \"Erro com os tipos (2)\"\n"
+		parser.aux.append("ERR \"Erro com os tipos (2)\"\n")
 
 def p_Call(p):
 	"Call : ID '(' ')'"
-	parser.mv = parser.mv + f"JUMP {p[1]}\n" ###
+	s = f"JUMP {p[1]}\n"
+	parser.aux.append(s)
 
 def p_Lines1(p):
 	"Lines : Line"
 	if parser.control:
+		s = ""
+		c = parser.aux.pop()
+		while c != "COND" and c != "AUX": #and parser.aux
+			s = c + s
+			c = parser.aux.pop()
+		parser.aux.append(s)
 		parser.aux.append("AUX")
 
 def p_Lines2(p):
@@ -137,15 +166,13 @@ def p_Line1(p):
 
 def p_Line2(p):
 	"Line : Select"
-	parser.mv = parser.mv + f"End{parser.n}: \n"
-	parser.control = False
-	parser.n = parser.n - 1
-	
+	parser.control = False ###
+	#parser.n = parser.n - 1
+
 def p_Line3(p):
 	"Line : Cicle"
-	parser.mv = parser.mv + f"End{parser.n}: \n"
-	parser.control = False
-	parser.n = parser.n - 1
+	parser.control = False ###
+	#parser.n = parser.n - 1
 
 def p_Line4(p):
 	"Line : Read"
@@ -155,37 +182,38 @@ def p_Line5(p):
 
 def p_Line6(p):
 	"Line : COMENT"
-	parser.mv = parser.mv + f"{p[1]}\n"
+	f"{p[1]}\n"
 	
 def p_Atribuition(p):
 	"Atribuition : ID ATRIBUICAO Expression ';'"
-	parser.mv = parser.mv + f"STOREG {parser.reg.index(p[1])}\n" ###
+	s = f"STOREG {parser.reg.index(p[1])}\n"
+	parser.aux[-1] = parser.aux[-1] + s ###
 
 def p_Select(p):
 	"Select : IF '(' Conditions ')' '{' Lines '}' Else"
-	s = f"JUMP End{parser.n}\nElse:\n"
-	l = parser.aux.pop(0)
-	while l != "AUX":
-		s = s + l
-		l = parser.aux.pop(0)
-	parser.mv = parser.mv + s
+	e = parser.aux.pop()
+	i = parser.aux.pop()
+	c = parser.aux.pop()
+	s = c + "JZ Else\n" + i + "JUMP End\n" + e #{parser.n}
+	parser.aux.append(s)
 
 def p_Else1(p):
 	"Else : ELSE '{' Lines '}'"
-	s = "JZ Else\n"
-	l = parser.aux.pop(0)
-	while l!="AUX":
-		s = s + l
-		l = parser.aux.pop(0)
-	parser.mv = parser.mv + s
+	parser.aux.pop()
+	e = parser.aux.pop()
+	s = "Else: //NOP\n" + e + "End: //NOP\n" #{parser.n}
+	parser.aux.append(s)
 
 def p_Else2(p):
 	"Else : "
-	pass
+	pass ###
 
 def p_Cicle1(p):
 	"Cicle : WHILE '(' Conditions ')' '{' Lines '}'"
-	s = f"JUMP Flag\nEnd{parser.n}:\n" ###
+	cc = parser.aux.pop()
+	c = parser.aux.pop()
+	s = "Flag: //NOP\n" + c + "JZ End:\n" + cc +"JUMP Flag\nEnd:\n" #{parser.n}
+	parser.aux.append(s)
 
 def p_Cicle2(p):
 	"Cicle : FOR '(' ID ATRIBUICAO INT ';' Conditions ';' Math ')' '{' Lines '}'"
@@ -194,50 +222,74 @@ def p_Cicle2(p):
 def p_Conditions1(p):
 	"Conditions : Condition"
 	parser.control = True
-	parser.n = parser.n + 1
+	#parser.n = parser.n + 1
+	parser.aux.append("COND")
 
 def p_Conditions2(p):
 	"Conditions : Condition AND Conditions"
-	parser.mv = parser.mv + "AND\n"
+	c = parser.aux.pop()
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "AND\n"
+	parser.aux.append(s)
+	parser.aux.append(c)
            
 def p_Conditions3(p):
 	"Conditions : Condition OR Conditions"
-	parser.mv = parser.mv + "OR\n"
+	c = parser.aux.pop()
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "OR\n"
+	parser.aux.append(s)
+	parser.aux.append(c)
 
 def p_Condition1(p):
 	"Condition : Expression EQ Expression"
-	parser.mv = parser.mv + "EQUAL\n"
-	#parser.c = parser.c + 1
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "EQUAL\n"
+	parser.aux.append(s)
 
 def p_Condition2(p):
 	"Condition : Expression NEQ Expression"
-	parser.mv = parser.mv + "EQUAL\nNOT\n"
-	#parser.c = parser.c + 1
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "EQUAL\nNOT\n"
+	parser.aux.append(s)
 
 def p_Condition3(p):
 	"Condition : Expression LT Expression"
-	parser.mv = parser.mv + "INF\n"
-	#parser.c = parser.c + 1
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "INF\n"
+	parser.aux.append(s)
 
 def p_Condition4(p):
 	"Condition : Expression LE Expression"
-	parser.mv = parser.mv + "INFEQ\n"
-	#parser.c = parser.c + 1
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "INFEQ\n"
+	parser.aux.append(s)
 
 def p_Condition5(p):
 	"Condition : Expression GT Expression"
-	parser.mv = parser.mv + "SUP\n"
-	#parser.c = parser.c + 1
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "SUP\n"
+	parser.aux.append(s)
 
 def p_Condition6(p):
 	"Condition : Expression GE Expression"
-	parser.mv = parser.mv + "SUPEQ\n"
-	#parser.c = parser.c + 1
+	b = parser.aux.pop()
+	a = parser.aux.pop()
+	s = a + b + "SUPEQ\n"
+	parser.aux.append(s)
 
 def p_Condition7(p):
 	"Condition : NOT '(' Condition ')'"
-	parser.mv = parser.mv + "NOT\n"
-	#parser.c = parser.c + 1
+	a = parser.aux.pop()
+	s = a + "NOT\n"
+	parser.aux.append(s)
 	
 def p_Math1(p):
 	"Math : Atribuition"
@@ -264,27 +316,21 @@ def p_Address(p):
 def p_Write1(p):
 	"Write : WRITE '(' STRING ')' ';'"
 	s = f"PUSHS {p[3]}\nWRITES\n"
-	if parser.control:
-		parser.aux.append(s)
-	else:
-		parser.mv = parser.mv + s
+	parser.aux.append(s)
 
 def p_Write2(p):
 	"Write : WRITE '(' STRING ',' VarList ')' ';'"
 	s = f"PUSHS {p[3]}\nWRITES\n" ###
-	if parser.control:
-		parser.aux.append(s)
-	else:
-		parser.mv = parser.mv + s
+	parser.aux.append(s)
 
 def p_Output(p):
 	"Output : RETURN Ret ';'"
-	parser.stack.pop()
-	parser.mv = parser.mv + f"STOP"
+	parser.type.pop()
+	parser.aux.append("STOP")
 
 def p_Ret1(p):
 	"Ret : ID"
-	parser.mv = parser.mv + f"PUSHG {parser.reg.index(p[1])}\n"
+	parser.aux.append(f"PUSHG {parser.reg.index(p[1])}\n")
 
 def p_Ret2(p):
 	"Ret : Value"
@@ -303,12 +349,11 @@ def p_error(p):
 parser = yacc.yacc()
 parser.exito = True
 parser.control = False 
-parser.n = parser.m = parser.M = 0
+#parser.n = parser.m = parser.M = 0
 parser.reg = []
-parser.stack =[]
+parser.type =[]
 parser.aux = []
 parser.mv = ""
-parser.c = 0
 
 fonte = ""
 c = open("teste1.c", "r")
@@ -322,4 +367,4 @@ with open("mv.txt", "w") as a:
 
 if parser.exito:
 	print("Parsing terminou com sucesso.\nCompilação Concluída.")
-	print(parser.stack)
+	print(parser.type,parser.aux)
