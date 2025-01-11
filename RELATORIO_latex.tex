@@ -21,6 +21,28 @@
 \predate{\begin{center}\itshape\large} % Estilo antes da data
 \postdate{\par\end{center}} % Estilo depois da data
 
+\lstset{
+    inputencoding=utf8,     % Configura o suporte para UTF-8
+    extendedchars=true,     % Permite caracteres fora do ASCII
+    literate={á}{{\'a}}1    % Define substituições para caracteres especiais
+             {Á}{{\'A}}1
+             {é}{{\'e}}1
+             {É}{{\'E}}1
+             {í}{{\'i}}1
+             {Í}{{\'I}}1
+             {ó}{{\'o}}1
+             {Ó}{{\'O}}1
+             {ú}{{\'u}}1
+             {Ú}{{\'U}}1
+             {ã}{{\~a}}1
+             {Ã}{{\~A}}1
+             {õ}{{\~o}}1
+             {Õ}{{\~O}}1
+             {ç}{{\c{c}}}1
+             {Ç}{{\c{C}}}1
+             {€}{{\texteuro}}1 % Adiciona suporte ao símbolo €
+}
+
 \titleformat{\chapter}
   {\normalfont\bfseries\LARGE\itshape} % Estilo: normal, negrito, tamanho grande, itálico
   {\textcolor{purple}{\thechapter}} % Número do capítulo em roxo
@@ -74,7 +96,7 @@
 
 Este relatório descreve o desenvolvimento de uma linguagem de programação imperativa simples, juntamente com seu compilador correspondente, conforme especificado na declaração do projeto. A linguagem foi projetada para facilitar a declaração de variáveis atômicas inteiras, a execução de operações aritméticas, relacionais e lógicas, bem como instruções de fluxo de controle (seleção e iteração). Além disso, recursos adicionais foram implementados, mais especificamente, a definição e invocação de subprogramas sem parâmetros.
 
-O compilador, criado com o auxílio das ferramentas PLY/Python, traduz o código-fonte escrito nesta linguagem em pseudocódigo e Assembly para execução em uma Máquina Virtual (EWVM). Este documento engloba a descrição do processo de implementação, exemplos de código na nova linguagem e validação através de casos de teste.
+O compilador, criado com o auxílio das ferramentas PLY/Python, traduz o código-fonte escrito nesta linguagem em pseudocódigo Assembly para execução em uma Máquina Virtual (EWVM). Este documento engloba a descrição do processo de implementação, exemplos de código na nova linguagem e validação através testes.
 \end{abstract}
 
 \tableofcontents % Insere a tabela de indice
@@ -93,7 +115,7 @@ Este projeto oferece uma experiência prática em todas as etapas de desenvolvim
 \section{Descri\c{c}\~{a}o do Problema}
 O objetivo deste projeto é criar e implementar instruções simples que permitam aos programadores realizar tarefas simples, como declarar variáveis, executar código, controlar o fluxo de opções e padrões de iteração e ler/escrever dados. Além disso, a linguagem deve incluir recursos adicionais, como suporte para matrizes ou sub-rotinas, para fornecer uma base sólida para a resolução de problemas básicos de computador. É um pseudocódigo e um código assembly que permite que ele seja executado em uma máquina virtual. Portanto, o principal problema é criar um sistema eficaz e eficiente que atenda ao processo de ensino específico e leve em consideração as limitações e características do idioma.
 \section{Linguagem}
-O nosso grupo decidiu escolher a linguagem C para tradução e compilação neste projeto porque é simples, familiar e atende bem às necessidades do enunciado. A sintaxe da linguagem é simples e fácil de entender, tornando a definição da sintaxe e o compilador fáceis de usar. Além disso, C já é uma linguagem que suporta muitos conceitos como declaração de variáveis, operações aritméticas e lógicas, expressões de controle de fluxo como "if", "while", "for", que são importantes para os negócios. Assim. Estar familiarizado com C nos ajudará a entender melhor como funciona o processo de conversão de código em código de máquina, o que é importante em nosso trabalho com máquinas virtuais. Resumindo, C fornece uma boa estrutura para processamento simples e eficiente de análise e compilação de linguagem.
+O nosso grupo decidiu escolher a linguagem C para tradução e compilação neste projeto porque é simples, familiar e atende bem às necessidades do enunciado. A sintaxe da linguagem é simples e fácil de entender, tornando a definição da sintaxe e o compilador fáceis de usar. Além disso, C já é uma linguagem que suporta muitos conceitos como declaração de variáveis, operações aritméticas e lógicas, expressões de controle de fluxo como "if", "while", "for", que são importantes para a resolução de problemas. Assim, estar familiarizado com C nos ajudará a entender melhor como funciona o processo de conversão de código em código de máquina, o que é importante em nosso trabalho com máquinas virtuais. Resumindo, C fornece uma boa estrutura para processamento simples e eficiente de análise e compilação de linguagem.
 
 \chapter{An\'{a}lisador L\'{e}xico}
 Para a resolução do problema construímos o analisador léxico seguindos os seguintes passos
@@ -536,7 +558,7 @@ Ret ::= ID
       | €
 \end{lstlisting}
 \section{Máquina Virtual}
-De acordo com o enunciado do trabalho, foi nos pedido que fosse gerado um código assembly por isso foi necessario acrescentar certas especificações yacc.
+De acordo com o enunciado do trabalho, foi nos pedido que fosse gerado um código assembly por isso foi necessário acrescentar certas especificações no yacc.
 
 \begin{lstlisting}
     import ply.yacc as yacc
@@ -1076,7 +1098,7 @@ Da mesma forma, é fácil de confirma que o resultado da compilação do segundo
 \chapter{Conclus\~{a}o}
 A concepção deste trabalho prático permitiu-nos combinar ideias e técnicas relacionadas com a tecnologia da linguagem na programação gramatical. Implementações de linguagem simples, com suporte a variáveis atômicas, instruções algorítmicas básicas, controle de fluxo e outros recursos adicionais, destacaram desafios e melhores práticas no desenvolvimento de gramáticas de tradução e no uso de ferramentas como Lex e Yacc do PLY.
 
-O pseudocódigo de design e máquina virtual (EWVM) forneceu uma explicação prática da tradução, destacando a possibilidade de construir e transformar a gramática em uma solução eficaz. A utilização de técnicas e conceitos de processamento de texto não só nos permitiu compreender melhor os conceitos teóricos, mas também aplicá-los de forma eficaz na resolução de problemas práticos. É definida uma linguagem(com base em C) que atenda aos requisitos, incluindo manipulação e métodos básicos de controle. Os documentos LaTeX têm contribuído para a transparência na apresentação dos projetos técnicos, garantindo que os processos e resultados sejam bem documentados e reproduzíveis.
+O pseudocódigo de design e máquina virtual (EWVM) forneceu uma explicação prática da tradução, destacando a possibilidade de construir e transformar a gramática em uma solução eficaz. A utilização de técnicas e conceitos de processamento de texto não só nos permitiu compreender melhor os conceitos teóricos, mas também aplicá-los de forma eficaz na resolução de problemas práticos. É também definida uma linguagem(com base em C) que atenda aos requisitos do enunciado, incluindo manipulação e métodos básicos de controle. O documento LaTeX contribuiu para a transparência na apresentação do projeto, garantindo que os processos e resultados fossem bem documentados e reproduzíveis.
 
-Por fim, o trabalho produzido revelou-se uma experiência de aprendizagem, afirmando as competências técnicas e práticas necessárias para projetos mais complexos. A trabalho desenvolvido, com exemplos práticos, atingiu seus objetivos e apresentou avanços significativos na compreensão e aplicação dos conceitos lecionados nesta unidade curricular.
+Por fim, o trabalho produzido revelou-se uma experiência de aprendizagem, afirmando as competências técnicas e práticas necessárias para projetos mais complexos.O projeto desenvolvido, com exemplos práticos, atingiu seus objetivos e apresentou avanços significativos na compreensão e aplicação dos conceitos lecionados nesta unidade curricular.
 \end{document}
