@@ -48,7 +48,7 @@ def p_Tipo(p):
 	parser.type.append("PUSHI")
 
 def p_Declarations1(p):
-	"Declarations : "
+	"Declarations : Declaration"
 	s = ""
 	for c in parser.aux:
 		s = s + c
@@ -56,7 +56,6 @@ def p_Declarations1(p):
 	parser.aux = []
 	parser.aux.append(s)
 	parser.aux.append("AUX")
-	pass
 
 def p_Declarations2(p):
 	"Declarations : Declaration Declarations"
@@ -151,7 +150,7 @@ def p_Call(p):
 	parser.aux.append(s)
 
 def p_Lines1(p):
-	"Lines : "
+	"Lines : Line"
 	s = ""
 	c = parser.aux.pop()
 	while c != "COND" and c != "AUX":
@@ -159,7 +158,6 @@ def p_Lines1(p):
 		c = parser.aux.pop()
 	parser.aux.append(s)
 	parser.aux.append("AUX")
-	pass
 
 def p_Lines2(p):
 	"Lines : Line Lines"
@@ -169,11 +167,15 @@ def p_Line1(p):
 
 def p_Line2(p):
 	"Line : Select"
-	parser.control = parser.control - 1
+	parser.c = parser.c + 1
+	if parser.c == parser.C:
+		parser.c = 0
 
 def p_Line3(p):
 	"Line : Cicle"
-	parser.control = parser.control - 1
+	parser.c = parser.c + 1
+	if parser.c == parser.C:
+		parser.c = 0
 
 def p_Line4(p):
 	"Line : Read"
@@ -195,14 +197,14 @@ def p_Select(p):
 	e = parser.aux.pop()
 	i = parser.aux.pop()
 	c = parser.aux.pop()
-	s = c + "JZ Else\n" + i + "JUMP End\n" + e
+	s = c + "JZ Else\n" + i + f"JUMP End{parser.C-parser.c}\n" + e
 	parser.aux.append(s)
 
 def p_Else1(p):
 	"Else : ELSE '{' Lines '}'"
 	parser.aux.pop()
 	e = parser.aux.pop()
-	s = "Else: //NOP\n" + e + "End: //NOP\n"
+	s = "Else: //NOP\n" + e + f"End{parser.C-parser.c}: //NOP\n"
 	parser.aux.append(s)
 
 def p_Else2(p):
@@ -211,9 +213,10 @@ def p_Else2(p):
 
 def p_Cicle1(p):
 	"Cicle : WHILE '(' Conditions ')' '{' Lines '}'"
+	parser.aux.pop()
 	cc = parser.aux.pop()
 	c = parser.aux.pop()
-	s = "Flag: //NOP\n" + c + "JZ End:\n" + cc +"JUMP Flag\nEnd: //NOP\n"
+	s = "Flag: //NOP\n" + c + f"JZ End{parser.C-parser.c}:\n" + cc +f"JUMP Flag\nEnd{parser.C-parser.c}: //NOP\n"
 	parser.aux.append(s)
 
 def p_Cicle2(p):
@@ -221,7 +224,7 @@ def p_Cicle2(p):
 
 def p_Conditions1(p):
 	"Conditions : Condition"
-	parser.control = parser.control + 1
+	parser.C = parser.C + 1
 	parser.aux.append("COND")
 
 def p_Conditions2(p):
@@ -315,26 +318,22 @@ def p_Write1(p):
 def p_Write2(p):
 	"Write : WRITE '(' STRING ',' Addresses ')' ';'"
 	a = p[3].split("%d")
-	t = a.pop()
-	s = ""
-	while t:
-		s = s + parser.aux.pop() + t
-		if a:
-			t = a.pop()
-		else:
-			t = False
-	s = s + f"PUSHS {p[3]}\nCONCAT\nWRITES\n"
+	s = f"PUSHS {a.pop()}\"\n"
+	for i in range(len(a)):
+		s = s + parser.aux.pop() + f"PUSHS {a.pop()}\"\nCONCAT\n"
+		i = i + 1
+	s = s + "WRITES\n"
 	parser.aux.append(s)
 
 def p_Addresses1(p):
 	"Addresses : ID"
-	s = f"PUSHG {parser.reg.index(p[1])}\nSTRI\n"
+	s = f"PUSHG {parser.reg.index(p[1])}\nSTRI\nCONCAT\n"
 	parser.aux.append(s)
 
 def p_Addresses2(p):
 	"Addresses : ID ',' Addresses"
 	e = "PUSHS \" \"\nCONCAT\n"
-	s = f"PUSHG {parser.reg.index(p[1])}\nSTRI\n\CONCAT\n"
+	s = e + f"PUSHG {parser.reg.index(p[1])}\nSTRI\nCONCAT\n"
 	parser.aux.append(s)
 
 def p_Output(p):
@@ -360,14 +359,14 @@ def p_error(p):
 
 parser = yacc.yacc()
 parser.exito = True
-parser.control = 0
+parser.c = parser.C = 0
 parser.reg = []
 parser.type =[]
 parser.aux = []
 parser.mv = ""
 
 fonte = ""
-c = open("teste-v2.c", "r")
+c = open("teste1.c", "r")
 for linha in c:
     fonte += linha
 c.close()
@@ -378,3 +377,4 @@ with open("mv.txt", "w") as a:
 
 if parser.exito:
 	print("Parsing terminou com sucesso.\nCompilação Concluída.")
+	print(parser.type,parser.aux)
