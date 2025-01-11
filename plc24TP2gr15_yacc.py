@@ -377,4 +377,4 @@ with open("mv.txt", "w") as a:
 
 if parser.exito:
 	print("Parsing terminou com sucesso.\nCompilação Concluída.")
-	print(parser.type,parser.aux)
+	#print(parser.type,parser.aux)
