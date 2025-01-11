@@ -10,15 +10,6 @@ from plc24TP2gr15_lex import tokens
 
 def p_Programa(p):
 	"Programa : Imports Funcs"
-	l = parser.aux.pop()
-	l = l.split("RETURN")
-	l = l[0]+"STOP"+l[1]
-	while l:
-		parser.mv = parser.mv + l
-		if parser.aux:
-			l = parser.aux.pop()
-		else:
-			l = False
 	
 def p_Imports1(p):
 	"Imports : Import"
@@ -40,15 +31,22 @@ def p_Func(p):
 	o = parser.aux.pop()
 	l = parser.aux.pop()
 	d = parser.aux.pop()
-	f = f"{p[2]}:\n"+d+l+o
-	parser.aux.append(f)
+	f = f"{p[2]}:\n"
+	if p[2] == "main":
+		o = o.replace("RETURN", "STOP")
+		f = f+d+l+o
+	else:
+		f = f+l+o
+	#parser.aux.append(f)
+	parser.mv = parser.mv + f
+	parser.aux.clear()
 
 def p_Tipo(p):
 	"Tipo : INTT"
 	parser.type.append("PUSHI")
 
 def p_Declarations1(p):
-	"Declarations : Declaration"
+	"Declarations : "
 	s = ""
 	for c in parser.aux:
 		s = s + c
@@ -56,6 +54,7 @@ def p_Declarations1(p):
 	parser.aux = []
 	parser.aux.append(s)
 	parser.aux.append("AUX")
+	pass
 
 def p_Declarations2(p):
 	"Declarations : Declaration Declarations"
@@ -150,7 +149,7 @@ def p_Call(p):
 	parser.aux.append(s)
 
 def p_Lines1(p):
-	"Lines : Line"
+	"Lines : "
 	s = ""
 	c = parser.aux.pop()
 	while c != "COND" and c != "AUX":
@@ -158,6 +157,7 @@ def p_Lines1(p):
 		c = parser.aux.pop()
 	parser.aux.append(s)
 	parser.aux.append("AUX")
+	pass
 
 def p_Lines2(p):
 	"Lines : Line Lines"
@@ -366,7 +366,7 @@ parser.aux = []
 parser.mv = ""
 
 fonte = ""
-c = open("teste1.c", "r")
+c = open("teste2.c", "r")
 for linha in c:
     fonte += linha
 c.close()
