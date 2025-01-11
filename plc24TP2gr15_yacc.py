@@ -55,17 +55,13 @@ def p_Declarations1(p):
 	s = s + "START\n"
 	parser.aux = []
 	parser.aux.append(s)
+	parser.aux.append("AUX")
 
 def p_Declarations2(p):
 	"Declarations : Declaration Declarations"
 
 def p_Declaration1(p):
 	"Declaration : Tipo VarList ';'"
-	c = parser.aux.pop()
-	if "PUSHG" in c:
-		parser.aux.append("ERR \"Variável declarada duas vezes\"\n")
-	else:
-		parser.aux.append(c) 
 	parser.type.pop()
 
 def p_Declaration2(p):
@@ -127,7 +123,7 @@ def p_Expression5(p):
 
 def p_Expression6(p):
 	"Expression : ID"
-	if p[1] in parser.reg: ###
+	if p[1] in parser.reg:
 		s = f"PUSHG {parser.reg.index(p[1])}\n"
 		parser.aux.append(s)
 	else:
@@ -155,14 +151,13 @@ def p_Call(p):
 
 def p_Lines1(p):
 	"Lines : Line"
-	if parser.control:
-		s = ""
+	s = ""
+	c = parser.aux.pop()
+	while c != "COND" and c != "AUX":
+		s = c + s
 		c = parser.aux.pop()
-		while c != "COND" and c != "AUX": #and parser.aux
-			s = c + s
-			c = parser.aux.pop()
-		parser.aux.append(s)
-		parser.aux.append("AUX")
+	parser.aux.append(s)
+	parser.aux.append("AUX")
 
 def p_Lines2(p):
 	"Lines : Line Lines"
@@ -172,13 +167,11 @@ def p_Line1(p):
 
 def p_Line2(p):
 	"Line : Select"
-	parser.control = parser.control - 1 #False ###
-	#parser.n = parser.n - 1
+	parser.control = parser.control - 1
 
 def p_Line3(p):
 	"Line : Cicle"
-	parser.control = parser.control - 1 #False ###
-	#parser.n = parser.n - 1
+	parser.control = parser.control - 1
 
 def p_Line4(p):
 	"Line : Read"
@@ -193,21 +186,21 @@ def p_Line6(p):
 def p_Atribuition(p):
 	"Atribuition : ID ATRIBUICAO Expression ';'"
 	s = f"STOREG {parser.reg.index(p[1])}\n"
-	parser.aux[-1] = parser.aux[-1] + s ###
+	parser.aux[-1] = parser.aux[-1] + s
 
 def p_Select(p):
 	"Select : IF '(' Conditions ')' '{' Lines '}' Else"
 	e = parser.aux.pop()
 	i = parser.aux.pop()
 	c = parser.aux.pop()
-	s = c + "JZ Else\n" + i + "JUMP End\n" + e #{parser.n}
+	s = c + "JZ Else\n" + i + "JUMP End\n" + e
 	parser.aux.append(s)
 
 def p_Else1(p):
 	"Else : ELSE '{' Lines '}'"
 	parser.aux.pop()
 	e = parser.aux.pop()
-	s = "Else: //NOP\n" + e + "End: //NOP\n" #{parser.n}
+	s = "Else: //NOP\n" + e + "End: //NOP\n"
 	parser.aux.append(s)
 
 def p_Else2(p):
@@ -218,7 +211,7 @@ def p_Cicle1(p):
 	"Cicle : WHILE '(' Conditions ')' '{' Lines '}'"
 	cc = parser.aux.pop()
 	c = parser.aux.pop()
-	s = "Flag: //NOP\n" + c + "JZ End:\n" + cc +"JUMP Flag\nEnd:\n" #{parser.n}
+	s = "Flag: //NOP\n" + c + "JZ End:\n" + cc +"JUMP Flag\nEnd: //NOP\n"
 	parser.aux.append(s)
 
 def p_Cicle2(p):
@@ -226,8 +219,7 @@ def p_Cicle2(p):
 
 def p_Conditions1(p):
 	"Conditions : Condition"
-	parser.control = parser.control + 1 #True
-	#parser.n = parser.n + 1
+	parser.control = parser.control + 1
 	parser.aux.append("COND")
 
 def p_Conditions2(p):
@@ -325,7 +317,10 @@ def p_Write2(p):
 	s = ""
 	while t:
 		s = s + parser.aux.pop() + t
-		t = a.pop()
+		if a:
+			t = a.pop()
+		else:
+			t = False
 	s = s + f"PUSHS {p[3]}\nCONCAT\nWRITES\n"
 	parser.aux.append(s)
 
@@ -344,6 +339,7 @@ def p_Output(p):
 	"Output : RETURN Ret ';'"
 	parser.type.pop()
 	r = parser.aux.pop()
+	parser.aux.pop()
 	parser.aux.append(r + "RETURN\n")
 
 def p_Ret1(p):
@@ -362,15 +358,14 @@ def p_error(p):
 
 parser = yacc.yacc()
 parser.exito = True
-parser.control = 0 #False 
-#parser.n = parser.m = parser.M = 0
+parser.control = 0
 parser.reg = []
 parser.type =[]
 parser.aux = []
 parser.mv = ""
 
 fonte = ""
-c = open("teste.c", "r")
+c = open("teste-v2.c", "r")
 for linha in c:
     fonte += linha
 c.close()
