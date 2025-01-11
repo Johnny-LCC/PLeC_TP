@@ -6,7 +6,7 @@ Alexis Correia - A102495
 
 import ply.lex as lex
 
-literals = ['(' , ')' , '{' , '}', ';' , ',' , '[' , ']', '&']
+literals = ['(' , ')' , '{' , '}', ';' , ',' , '&']
 
 tokens = ('ID', 'INT', 'INTT','STRING', 'ADD', 'SUB',
           'MUL', 'DIV','EQ', 'NEQ', 'LT', 'LE', 'GT', 

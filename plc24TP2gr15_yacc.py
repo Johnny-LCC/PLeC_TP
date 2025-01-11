@@ -48,7 +48,7 @@ def p_Tipo(p):
 	parser.type.append("PUSHI")
 
 def p_Declarations1(p):
-	"Declarations : Declaration"
+	"Declarations : "
 	s = ""
 	for c in parser.aux:
 		s = s + c
@@ -56,6 +56,7 @@ def p_Declarations1(p):
 	parser.aux = []
 	parser.aux.append(s)
 	parser.aux.append("AUX")
+	pass
 
 def p_Declarations2(p):
 	"Declarations : Declaration Declarations"
@@ -150,7 +151,7 @@ def p_Call(p):
 	parser.aux.append(s)
 
 def p_Lines1(p):
-	"Lines : Line"
+	"Lines : "
 	s = ""
 	c = parser.aux.pop()
 	while c != "COND" and c != "AUX":
@@ -158,6 +159,7 @@ def p_Lines1(p):
 		c = parser.aux.pop()
 	parser.aux.append(s)
 	parser.aux.append("AUX")
+	pass
 
 def p_Lines2(p):
 	"Lines : Line Lines"
@@ -376,4 +378,3 @@ with open("mv.txt", "w") as a:
 
 if parser.exito:
 	print("Parsing terminou com sucesso.\nCompilação Concluída.")
-	print(parser.type,parser.aux)
