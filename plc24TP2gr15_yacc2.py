@@ -319,11 +319,12 @@ def p_Write1(p):
 
 def p_Write2(p):
 	"Write : WRITE '(' STRING ',' Addresses ')' ';'"
-	a = p[3].split("%d")
+	a = p[3].replace("\"", "")
+	a = a.split("%d")
 	s = f"PUSHS \"{a.pop()}\"\n" #####
 	for i in range(len(a)):
 		s = s + parser.aux.pop() + f"PUSHS \"{a.pop()}\"\nCONCAT\n" ####
-		i = i + 1
+		#i = i + 1
 	s = s + "WRITES\n"
 	parser.aux.append(s)
 
